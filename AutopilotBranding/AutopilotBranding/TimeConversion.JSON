@@ -1,0 +1,2538 @@
+{
+    "mapTimezones": {
+        "mapZone": [
+            {
+                "windows": "Dateline Standard Time",
+                "territory": "001",
+                "type": "Etc/GMT+12"
+            },
+            {
+                "windows": "Dateline Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+12"
+            },
+            {
+                "windows": "UTC-11",
+                "territory": "001",
+                "type": "Etc/GMT+11"
+            },
+            {
+                "windows": "UTC-11",
+                "territory": "AS",
+                "type": "Pacific/Pago_Pago"
+            },
+            {
+                "windows": "UTC-11",
+                "territory": "NU",
+                "type": "Pacific/Niue"
+            },
+            {
+                "windows": "UTC-11",
+                "territory": "UM",
+                "type": "Pacific/Midway"
+            },
+            {
+                "windows": "UTC-11",
+                "territory": "ZZ",
+                "type": "Etc/GMT+11"
+            },
+            {
+                "windows": "Aleutian Standard Time",
+                "territory": "001",
+                "type": "America/Adak"
+            },
+            {
+                "windows": "Aleutian Standard Time",
+                "territory": "US",
+                "type": "America/Adak"
+            },
+            {
+                "windows": "Hawaiian Standard Time",
+                "territory": "001",
+                "type": "Pacific/Honolulu"
+            },
+            {
+                "windows": "Hawaiian Standard Time",
+                "territory": "CK",
+                "type": "Pacific/Rarotonga"
+            },
+            {
+                "windows": "Hawaiian Standard Time",
+                "territory": "PF",
+                "type": "Pacific/Tahiti"
+            },
+            {
+                "windows": "Hawaiian Standard Time",
+                "territory": "UM",
+                "type": "Pacific/Johnston"
+            },
+            {
+                "windows": "Hawaiian Standard Time",
+                "territory": "US",
+                "type": "Pacific/Honolulu"
+            },
+            {
+                "windows": "Hawaiian Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+10"
+            },
+            {
+                "windows": "Marquesas Standard Time",
+                "territory": "001",
+                "type": "Pacific/Marquesas"
+            },
+            {
+                "windows": "Marquesas Standard Time",
+                "territory": "PF",
+                "type": "Pacific/Marquesas"
+            },
+            {
+                "windows": "Alaskan Standard Time",
+                "territory": "001",
+                "type": "America/Anchorage"
+            },
+            {
+                "windows": "Alaskan Standard Time",
+                "territory": "US",
+                "type": "America/Anchorage America/Juneau America/Metlakatla America/Nome America/Sitka America/Yakutat"
+            },
+            {
+                "windows": "UTC-09",
+                "territory": "001",
+                "type": "Etc/GMT+9"
+            },
+            {
+                "windows": "UTC-09",
+                "territory": "PF",
+                "type": "Pacific/Gambier"
+            },
+            {
+                "windows": "UTC-09",
+                "territory": "ZZ",
+                "type": "Etc/GMT+9"
+            },
+            {
+                "windows": "Pacific Standard Time (Mexico)",
+                "territory": "001",
+                "type": "America/Tijuana"
+            },
+            {
+                "windows": "Pacific Standard Time (Mexico)",
+                "territory": "MX",
+                "type": "America/Tijuana America/Santa_Isabel"
+            },
+            {
+                "windows": "UTC-08",
+                "territory": "001",
+                "type": "Etc/GMT+8"
+            },
+            {
+                "windows": "UTC-08",
+                "territory": "PN",
+                "type": "Pacific/Pitcairn"
+            },
+            {
+                "windows": "UTC-08",
+                "territory": "ZZ",
+                "type": "Etc/GMT+8"
+            },
+            {
+                "windows": "Pacific Standard Time",
+                "territory": "001",
+                "type": "America/Los_Angeles"
+            },
+            {
+                "windows": "Pacific Standard Time",
+                "territory": "CA",
+                "type": "America/Vancouver"
+            },
+            {
+                "windows": "Pacific Standard Time",
+                "territory": "US",
+                "type": "America/Los_Angeles"
+            },
+            {
+                "windows": "Pacific Standard Time",
+                "territory": "ZZ",
+                "type": "PST8PDT"
+            },
+            {
+                "windows": "US Mountain Standard Time",
+                "territory": "001",
+                "type": "America/Phoenix"
+            },
+            {
+                "windows": "US Mountain Standard Time",
+                "territory": "CA",
+                "type": "America/Creston America/Dawson_Creek America/Fort_Nelson"
+            },
+            {
+                "windows": "US Mountain Standard Time",
+                "territory": "MX",
+                "type": "America/Hermosillo"
+            },
+            {
+                "windows": "US Mountain Standard Time",
+                "territory": "US",
+                "type": "America/Phoenix"
+            },
+            {
+                "windows": "US Mountain Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+7"
+            },
+            {
+                "windows": "Mountain Standard Time (Mexico)",
+                "territory": "001",
+                "type": "America/Mazatlan"
+            },
+            {
+                "windows": "Mountain Standard Time (Mexico)",
+                "territory": "MX",
+                "type": "America/Mazatlan"
+            },
+            {
+                "windows": "Mountain Standard Time",
+                "territory": "001",
+                "type": "America/Denver"
+            },
+            {
+                "windows": "Mountain Standard Time",
+                "territory": "CA",
+                "type": "America/Edmonton America/Cambridge_Bay America/Inuvik America/Yellowknife"
+            },
+            {
+                "windows": "Mountain Standard Time",
+                "territory": "MX",
+                "type": "America/Ciudad_Juarez"
+            },
+            {
+                "windows": "Mountain Standard Time",
+                "territory": "US",
+                "type": "America/Denver America/Boise"
+            },
+            {
+                "windows": "Mountain Standard Time",
+                "territory": "ZZ",
+                "type": "MST7MDT"
+            },
+            {
+                "windows": "Yukon Standard Time",
+                "territory": "001",
+                "type": "America/Whitehorse"
+            },
+            {
+                "windows": "Yukon Standard Time",
+                "territory": "CA",
+                "type": "America/Whitehorse America/Dawson"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "001",
+                "type": "America/Guatemala"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "BZ",
+                "type": "America/Belize"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "CR",
+                "type": "America/Costa_Rica"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "EC",
+                "type": "Pacific/Galapagos"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "GT",
+                "type": "America/Guatemala"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "HN",
+                "type": "America/Tegucigalpa"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "NI",
+                "type": "America/Managua"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "SV",
+                "type": "America/El_Salvador"
+            },
+            {
+                "windows": "Central America Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+6"
+            },
+            {
+                "windows": "Central Standard Time",
+                "territory": "001",
+                "type": "America/Chicago"
+            },
+            {
+                "windows": "Central Standard Time",
+                "territory": "CA",
+                "type": "America/Winnipeg America/Rainy_River America/Rankin_Inlet America/Resolute"
+            },
+            {
+                "windows": "Central Standard Time",
+                "territory": "MX",
+                "type": "America/Matamoros America/Ojinaga"
+            },
+            {
+                "windows": "Central Standard Time",
+                "territory": "US",
+                "type": "America/Chicago America/Indiana/Knox America/Indiana/Tell_City America/Menominee America/North_Dakota/Beulah America/North_Dakota/Center America/North_Dakota/New_Salem"
+            },
+            {
+                "windows": "Central Standard Time",
+                "territory": "ZZ",
+                "type": "CST6CDT"
+            },
+            {
+                "windows": "Easter Island Standard Time",
+                "territory": "001",
+                "type": "Pacific/Easter"
+            },
+            {
+                "windows": "Easter Island Standard Time",
+                "territory": "CL",
+                "type": "Pacific/Easter"
+            },
+            {
+                "windows": "Central Standard Time (Mexico)",
+                "territory": "001",
+                "type": "America/Mexico_City"
+            },
+            {
+                "windows": "Central Standard Time (Mexico)",
+                "territory": "MX",
+                "type": "America/Mexico_City America/Bahia_Banderas America/Merida America/Monterrey America/Chihuahua "
+            },
+            {
+                "windows": "Canada Central Standard Time",
+                "territory": "001",
+                "type": "America/Regina"
+            },
+            {
+                "windows": "Canada Central Standard Time",
+                "territory": "CA",
+                "type": "America/Regina America/Swift_Current"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "001",
+                "type": "America/Bogota"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "BR",
+                "type": "America/Rio_Branco America/Eirunepe"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "CA",
+                "type": "America/Coral_Harbour"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "CO",
+                "type": "America/Bogota"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "EC",
+                "type": "America/Guayaquil"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "JM",
+                "type": "America/Jamaica"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "KY",
+                "type": "America/Cayman"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "PA",
+                "type": "America/Panama"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "PE",
+                "type": "America/Lima"
+            },
+            {
+                "windows": "SA Pacific Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+5"
+            },
+            {
+                "windows": "Eastern Standard Time (Mexico)",
+                "territory": "001",
+                "type": "America/Cancun"
+            },
+            {
+                "windows": "Eastern Standard Time (Mexico)",
+                "territory": "MX",
+                "type": "America/Cancun"
+            },
+            {
+                "windows": "Eastern Standard Time",
+                "territory": "001",
+                "type": "America/New_York"
+            },
+            {
+                "windows": "Eastern Standard Time",
+                "territory": "BS",
+                "type": "America/Nassau"
+            },
+            {
+                "windows": "Eastern Standard Time",
+                "territory": "CA",
+                "type": "America/Toronto America/Iqaluit America/Montreal America/Nipigon America/Pangnirtung America/Thunder_Bay"
+            },
+            {
+                "windows": "Eastern Standard Time",
+                "territory": "US",
+                "type": "America/New_York America/Detroit America/Indiana/Petersburg America/Indiana/Vincennes America/Indiana/Winamac America/Kentucky/Monticello America/Louisville"
+            },
+            {
+                "windows": "Eastern Standard Time",
+                "territory": "ZZ",
+                "type": "EST5EDT"
+            },
+            {
+                "windows": "Haiti Standard Time",
+                "territory": "001",
+                "type": "America/Port-au-Prince"
+            },
+            {
+                "windows": "Haiti Standard Time",
+                "territory": "HT",
+                "type": "America/Port-au-Prince"
+            },
+            {
+                "windows": "Cuba Standard Time",
+                "territory": "001",
+                "type": "America/Havana"
+            },
+            {
+                "windows": "Cuba Standard Time",
+                "territory": "CU",
+                "type": "America/Havana"
+            },
+            {
+                "windows": "US Eastern Standard Time",
+                "territory": "001",
+                "type": "America/Indianapolis"
+            },
+            {
+                "windows": "US Eastern Standard Time",
+                "territory": "US",
+                "type": "America/Indianapolis America/Indiana/Marengo America/Indiana/Vevay"
+            },
+            {
+                "windows": "Turks And Caicos Standard Time",
+                "territory": "001",
+                "type": "America/Grand_Turk"
+            },
+            {
+                "windows": "Turks And Caicos Standard Time",
+                "territory": "TC",
+                "type": "America/Grand_Turk"
+            },
+            {
+                "windows": "Paraguay Standard Time",
+                "territory": "001",
+                "type": "America/Asuncion"
+            },
+            {
+                "windows": "Paraguay Standard Time",
+                "territory": "PY",
+                "type": "America/Asuncion"
+            },
+            {
+                "windows": "Atlantic Standard Time",
+                "territory": "001",
+                "type": "America/Halifax"
+            },
+            {
+                "windows": "Atlantic Standard Time",
+                "territory": "BM",
+                "type": "Atlantic/Bermuda"
+            },
+            {
+                "windows": "Atlantic Standard Time",
+                "territory": "CA",
+                "type": "America/Halifax America/Glace_Bay America/Goose_Bay America/Moncton"
+            },
+            {
+                "windows": "Atlantic Standard Time",
+                "territory": "GL",
+                "type": "America/Thule"
+            },
+            {
+                "windows": "Venezuela Standard Time",
+                "territory": "001",
+                "type": "America/Caracas"
+            },
+            {
+                "windows": "Venezuela Standard Time",
+                "territory": "VE",
+                "type": "America/Caracas"
+            },
+            {
+                "windows": "Central Brazilian Standard Time",
+                "territory": "001",
+                "type": "America/Cuiaba"
+            },
+            {
+                "windows": "Central Brazilian Standard Time",
+                "territory": "BR",
+                "type": "America/Cuiaba America/Campo_Grande"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "001",
+                "type": "America/La_Paz"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "AG",
+                "type": "America/Antigua"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "AI",
+                "type": "America/Anguilla"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "AW",
+                "type": "America/Aruba"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "BB",
+                "type": "America/Barbados"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "BL",
+                "type": "America/St_Barthelemy"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "BO",
+                "type": "America/La_Paz"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "BQ",
+                "type": "America/Kralendijk"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "BR",
+                "type": "America/Manaus America/Boa_Vista America/Porto_Velho"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "CA",
+                "type": "America/Blanc-Sablon"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "CW",
+                "type": "America/Curacao"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "DM",
+                "type": "America/Dominica"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "DO",
+                "type": "America/Santo_Domingo"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "GD",
+                "type": "America/Grenada"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "GP",
+                "type": "America/Guadeloupe"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "GY",
+                "type": "America/Guyana"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "KN",
+                "type": "America/St_Kitts"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "LC",
+                "type": "America/St_Lucia"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "MF",
+                "type": "America/Marigot"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "MQ",
+                "type": "America/Martinique"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "MS",
+                "type": "America/Montserrat"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "PR",
+                "type": "America/Puerto_Rico"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "SX",
+                "type": "America/Lower_Princes"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "TT",
+                "type": "America/Port_of_Spain"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "VC",
+                "type": "America/St_Vincent"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "VG",
+                "type": "America/Tortola"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "VI",
+                "type": "America/St_Thomas"
+            },
+            {
+                "windows": "SA Western Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+4"
+            },
+            {
+                "windows": "Pacific SA Standard Time",
+                "territory": "001",
+                "type": "America/Santiago"
+            },
+            {
+                "windows": "Pacific SA Standard Time",
+                "territory": "CL",
+                "type": "America/Santiago"
+            },
+            {
+                "windows": "Newfoundland Standard Time",
+                "territory": "001",
+                "type": "America/St_Johns"
+            },
+            {
+                "windows": "Newfoundland Standard Time",
+                "territory": "CA",
+                "type": "America/St_Johns"
+            },
+            {
+                "windows": "Tocantins Standard Time",
+                "territory": "001",
+                "type": "America/Araguaina"
+            },
+            {
+                "windows": "Tocantins Standard Time",
+                "territory": "BR",
+                "type": "America/Araguaina"
+            },
+            {
+                "windows": "E. South America Standard Time",
+                "territory": "001",
+                "type": "America/Sao_Paulo"
+            },
+            {
+                "windows": "E. South America Standard Time",
+                "territory": "BR",
+                "type": "America/Sao_Paulo"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "001",
+                "type": "America/Cayenne"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/Rwindowsa Antarctica/Palmer"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "BR",
+                "type": "America/Fortaleza America/Belem America/Maceio America/Recife America/Santarem"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "FK",
+                "type": "Atlantic/Stanley"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "GF",
+                "type": "America/Cayenne"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "SR",
+                "type": "America/Paramaribo"
+            },
+            {
+                "windows": "SA Eastern Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+3"
+            },
+            {
+                "windows": "Argentina Standard Time",
+                "territory": "001",
+                "type": "America/Buenos_Aires"
+            },
+            {
+                "windows": "Argentina Standard Time",
+                "territory": "AR",
+                "type": "America/Buenos_Aires America/Argentina/La_Rioja America/Argentina/Rio_Gallegos America/Argentina/Salta America/Argentina/San_Juan America/Argentina/San_Luis America/Argentina/Tucuman America/Argentina/Ushuaia America/Catamarca America/Cordoba America/Jujuy America/Mendoza"
+            },
+            {
+                "windows": "Greenland Standard Time",
+                "territory": "001",
+                "type": "America/Godthab"
+            },
+            {
+                "windows": "Greenland Standard Time",
+                "territory": "GL",
+                "type": "America/Godthab"
+            },
+            {
+                "windows": "Montevideo Standard Time",
+                "territory": "001",
+                "type": "America/Montevideo"
+            },
+            {
+                "windows": "Montevideo Standard Time",
+                "territory": "UY",
+                "type": "America/Montevideo"
+            },
+            {
+                "windows": "Magallanes Standard Time",
+                "territory": "001",
+                "type": "America/Punta_Arenas"
+            },
+            {
+                "windows": "Magallanes Standard Time",
+                "territory": "CL",
+                "type": "America/Punta_Arenas"
+            },
+            {
+                "windows": "Saint Pierre Standard Time",
+                "territory": "001",
+                "type": "America/Miquelon"
+            },
+            {
+                "windows": "Saint Pierre Standard Time",
+                "territory": "PM",
+                "type": "America/Miquelon"
+            },
+            {
+                "windows": "Bahia Standard Time",
+                "territory": "001",
+                "type": "America/Bahia"
+            },
+            {
+                "windows": "Bahia Standard Time",
+                "territory": "BR",
+                "type": "America/Bahia"
+            },
+            {
+                "windows": "UTC-02",
+                "territory": "001",
+                "type": "Etc/GMT+2"
+            },
+            {
+                "windows": "UTC-02",
+                "territory": "BR",
+                "type": "America/Noronha"
+            },
+            {
+                "windows": "UTC-02",
+                "territory": "GS",
+                "type": "Atlantic/South_Georgia"
+            },
+            {
+                "windows": "UTC-02",
+                "territory": "ZZ",
+                "type": "Etc/GMT+2"
+            },
+            {
+                "windows": "Azores Standard Time",
+                "territory": "001",
+                "type": "Atlantic/Azores"
+            },
+            {
+                "windows": "Azores Standard Time",
+                "territory": "GL",
+                "type": "America/Scoresbysund"
+            },
+            {
+                "windows": "Azores Standard Time",
+                "territory": "PT",
+                "type": "Atlantic/Azores"
+            },
+            {
+                "windows": "Cape Verde Standard Time",
+                "territory": "001",
+                "type": "Atlantic/Cape_Verde"
+            },
+            {
+                "windows": "Cape Verde Standard Time",
+                "territory": "CV",
+                "type": "Atlantic/Cape_Verde"
+            },
+            {
+                "windows": "Cape Verde Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT+1"
+            },
+            {
+                "windows": "UTC",
+                "territory": "001",
+                "type": "Etc/UTC"
+            },
+            {
+                "windows": "UTC",
+                "territory": "ZZ",
+                "type": "Etc/UTC Etc/GMT"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "001",
+                "type": "Europe/London"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "ES",
+                "type": "Atlantic/Canary"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "FO",
+                "type": "Atlantic/Faeroe"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "GB",
+                "type": "Europe/London"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "GG",
+                "type": "Europe/Guernsey"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "IE",
+                "type": "Europe/Dublin"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "IM",
+                "type": "Europe/Isle_of_Man"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "JE",
+                "type": "Europe/Jersey"
+            },
+            {
+                "windows": "GMT Standard Time",
+                "territory": "PT",
+                "type": "Europe/Lisbon Atlantic/Madeira"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "001",
+                "type": "Atlantic/Reykjavik"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "BF",
+                "type": "Africa/Ouagadougou"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "CI",
+                "type": "Africa/Abidjan"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "GH",
+                "type": "Africa/Accra"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "GL",
+                "type": "America/Danmarkshavn"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "GM",
+                "type": "Africa/Banjul"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "GN",
+                "type": "Africa/Conakry"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "GW",
+                "type": "Africa/Bissau"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "IS",
+                "type": "Atlantic/Reykjavik"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "LR",
+                "type": "Africa/Monrovia"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "ML",
+                "type": "Africa/Bamako"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "MR",
+                "type": "Africa/Nouakchott"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "SH",
+                "type": "Atlantic/St_Helena"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "SL",
+                "type": "Africa/Freetown"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "SN",
+                "type": "Africa/Dakar"
+            },
+            {
+                "windows": "Greenwich Standard Time",
+                "territory": "TG",
+                "type": "Africa/Lome"
+            },
+            {
+                "windows": "Sao Tome Standard Time",
+                "territory": "001",
+                "type": "Africa/Sao_Tome"
+            },
+            {
+                "windows": "Sao Tome Standard Time",
+                "territory": "ST",
+                "type": "Africa/Sao_Tome"
+            },
+            {
+                "windows": "Morocco Standard Time",
+                "territory": "001",
+                "type": "Africa/Casablanca"
+            },
+            {
+                "windows": "Morocco Standard Time",
+                "territory": "EH",
+                "type": "Africa/El_Aaiun"
+            },
+            {
+                "windows": "Morocco Standard Time",
+                "territory": "MA",
+                "type": "Africa/Casablanca"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "001",
+                "type": "Europe/Berlin"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "AD",
+                "type": "Europe/Andorra"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "AT",
+                "type": "Europe/Vienna"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "CH",
+                "type": "Europe/Zurich"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "DE",
+                "type": "Europe/Berlin Europe/Busingen"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "GI",
+                "type": "Europe/Gibraltar"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "IT",
+                "type": "Europe/Rome"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "LI",
+                "type": "Europe/Vaduz"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "LU",
+                "type": "Europe/Luxembourg"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "MC",
+                "type": "Europe/Monaco"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "MT",
+                "type": "Europe/Malta"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "NL",
+                "type": "Europe/Amsterdam"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "NO",
+                "type": "Europe/Oslo"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "SE",
+                "type": "Europe/Stockholm"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "SJ",
+                "type": "Arctic/Longyearbyen"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "SM",
+                "type": "Europe/San_Marino"
+            },
+            {
+                "windows": "W. Europe Standard Time",
+                "territory": "VA",
+                "type": "Europe/Vatican"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "001",
+                "type": "Europe/Budapest"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "AL",
+                "type": "Europe/Tirane"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "CZ",
+                "type": "Europe/Prague"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "HU",
+                "type": "Europe/Budapest"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "ME",
+                "type": "Europe/Podgorica"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "RS",
+                "type": "Europe/Belgrade"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "SI",
+                "type": "Europe/Ljubljana"
+            },
+            {
+                "windows": "Central Europe Standard Time",
+                "territory": "SK",
+                "type": "Europe/Bratislava"
+            },
+            {
+                "windows": "Romance Standard Time",
+                "territory": "001",
+                "type": "Europe/Paris"
+            },
+            {
+                "windows": "Romance Standard Time",
+                "territory": "BE",
+                "type": "Europe/Brussels"
+            },
+            {
+                "windows": "Romance Standard Time",
+                "territory": "DK",
+                "type": "Europe/Copenhagen"
+            },
+            {
+                "windows": "Romance Standard Time",
+                "territory": "ES",
+                "type": "Europe/Madrid Africa/Ceuta"
+            },
+            {
+                "windows": "Romance Standard Time",
+                "territory": "FR",
+                "type": "Europe/Paris"
+            },
+            {
+                "windows": "Central European Standard Time",
+                "territory": "001",
+                "type": "Europe/Warsaw"
+            },
+            {
+                "windows": "Central European Standard Time",
+                "territory": "BA",
+                "type": "Europe/Sarajevo"
+            },
+            {
+                "windows": "Central European Standard Time",
+                "territory": "HR",
+                "type": "Europe/Zagreb"
+            },
+            {
+                "windows": "Central European Standard Time",
+                "territory": "MK",
+                "type": "Europe/Skopje"
+            },
+            {
+                "windows": "Central European Standard Time",
+                "territory": "PL",
+                "type": "Europe/Warsaw"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "001",
+                "type": "Africa/Lagos"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "AO",
+                "type": "Africa/Luanda"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "BJ",
+                "type": "Africa/Porto-Novo"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "CD",
+                "type": "Africa/Kinshasa"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "CF",
+                "type": "Africa/Bangui"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "CG",
+                "type": "Africa/Brazzaville"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "CM",
+                "type": "Africa/Douala"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "DZ",
+                "type": "Africa/Algiers"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "GA",
+                "type": "Africa/Libreville"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "GQ",
+                "type": "Africa/Malabo"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "NE",
+                "type": "Africa/Niamey"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "NG",
+                "type": "Africa/Lagos"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "TD",
+                "type": "Africa/Ndjamena"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "TN",
+                "type": "Africa/Tunis"
+            },
+            {
+                "windows": "W. Central Africa Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-1"
+            },
+            {
+                "windows": "Jordan Standard Time",
+                "territory": "001",
+                "type": "Asia/Amman"
+            },
+            {
+                "windows": "Jordan Standard Time",
+                "territory": "JO",
+                "type": "Asia/Amman"
+            },
+            {
+                "windows": "GTB Standard Time",
+                "territory": "001",
+                "type": "Europe/Bucharest"
+            },
+            {
+                "windows": "GTB Standard Time",
+                "territory": "CY",
+                "type": "Asia/Nicosia Asia/Famagusta"
+            },
+            {
+                "windows": "GTB Standard Time",
+                "territory": "GR",
+                "type": "Europe/Athens"
+            },
+            {
+                "windows": "GTB Standard Time",
+                "territory": "RO",
+                "type": "Europe/Bucharest"
+            },
+            {
+                "windows": "Middle East Standard Time",
+                "territory": "001",
+                "type": "Asia/Beirut"
+            },
+            {
+                "windows": "Middle East Standard Time",
+                "territory": "LB",
+                "type": "Asia/Beirut"
+            },
+            {
+                "windows": "Egypt Standard Time",
+                "territory": "001",
+                "type": "Africa/Cairo"
+            },
+            {
+                "windows": "Egypt Standard Time",
+                "territory": "EG",
+                "type": "Africa/Cairo"
+            },
+            {
+                "windows": "E. Europe Standard Time",
+                "territory": "001",
+                "type": "Europe/Chisinau"
+            },
+            {
+                "windows": "E. Europe Standard Time",
+                "territory": "MD",
+                "type": "Europe/Chisinau"
+            },
+            {
+                "windows": "Syria Standard Time",
+                "territory": "001",
+                "type": "Asia/Damascus"
+            },
+            {
+                "windows": "Syria Standard Time",
+                "territory": "SY",
+                "type": "Asia/Damascus"
+            },
+            {
+                "windows": "West Bank Standard Time",
+                "territory": "001",
+                "type": "Asia/Hebron"
+            },
+            {
+                "windows": "West Bank Standard Time",
+                "territory": "PS",
+                "type": "Asia/Hebron Asia/Gaza"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "001",
+                "type": "Africa/Johannesburg"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "BI",
+                "type": "Africa/Bujumbura"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "BW",
+                "type": "Africa/Gaborone"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "CD",
+                "type": "Africa/Lubumbashi"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "LS",
+                "type": "Africa/Maseru"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "MW",
+                "type": "Africa/Blantyre"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "MZ",
+                "type": "Africa/Maputo"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "RW",
+                "type": "Africa/Kigali"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "SZ",
+                "type": "Africa/Mbabane"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "ZA",
+                "type": "Africa/Johannesburg"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "ZM",
+                "type": "Africa/Lusaka"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "ZW",
+                "type": "Africa/Harare"
+            },
+            {
+                "windows": "South Africa Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-2"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "001",
+                "type": "Europe/Kiev"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "AX",
+                "type": "Europe/Mariehamn"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "BG",
+                "type": "Europe/Sofia"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "EE",
+                "type": "Europe/Tallinn"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "FI",
+                "type": "Europe/Helsinki"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "LT",
+                "type": "Europe/Vilnius"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "LV",
+                "type": "Europe/Riga"
+            },
+            {
+                "windows": "FLE Standard Time",
+                "territory": "UA",
+                "type": "Europe/Kiev Europe/Uzhgorod Europe/Zaporozhye"
+            },
+            {
+                "windows": "Israel Standard Time",
+                "territory": "001",
+                "type": "Asia/Jerusalem"
+            },
+            {
+                "windows": "Israel Standard Time",
+                "territory": "IL",
+                "type": "Asia/Jerusalem"
+            },
+            {
+                "windows": "South Sudan Standard Time",
+                "territory": "001",
+                "type": "Africa/Juba"
+            },
+            {
+                "windows": "South Sudan Standard Time",
+                "territory": "SS",
+                "type": "Africa/Juba"
+            },
+            {
+                "windows": "Kaliningrad Standard Time",
+                "territory": "001",
+                "type": "Europe/Kaliningrad"
+            },
+            {
+                "windows": "Kaliningrad Standard Time",
+                "territory": "RU",
+                "type": "Europe/Kaliningrad"
+            },
+            {
+                "windows": "Sudan Standard Time",
+                "territory": "001",
+                "type": "Africa/Khartoum"
+            },
+            {
+                "windows": "Sudan Standard Time",
+                "territory": "SD",
+                "type": "Africa/Khartoum"
+            },
+            {
+                "windows": "Libya Standard Time",
+                "territory": "001",
+                "type": "Africa/Tripoli"
+            },
+            {
+                "windows": "Libya Standard Time",
+                "territory": "LY",
+                "type": "Africa/Tripoli"
+            },
+            {
+                "windows": "Namibia Standard Time",
+                "territory": "001",
+                "type": "Africa/Windhoek"
+            },
+            {
+                "windows": "Namibia Standard Time",
+                "territory": "NA",
+                "type": "Africa/Windhoek"
+            },
+            {
+                "windows": "Arabic Standard Time",
+                "territory": "001",
+                "type": "Asia/Baghdad"
+            },
+            {
+                "windows": "Arabic Standard Time",
+                "territory": "IQ",
+                "type": "Asia/Baghdad"
+            },
+            {
+                "windows": "Turkey Standard Time",
+                "territory": "001",
+                "type": "Europe/Istanbul"
+            },
+            {
+                "windows": "Turkey Standard Time",
+                "territory": "TR",
+                "type": "Europe/Istanbul"
+            },
+            {
+                "windows": "Arab Standard Time",
+                "territory": "001",
+                "type": "Asia/Riyadh"
+            },
+            {
+                "windows": "Arab Standard Time",
+                "territory": "BH",
+                "type": "Asia/Bahrain"
+            },
+            {
+                "windows": "Arab Standard Time",
+                "territory": "KW",
+                "type": "Asia/Kuwait"
+            },
+            {
+                "windows": "Arab Standard Time",
+                "territory": "QA",
+                "type": "Asia/Qatar"
+            },
+            {
+                "windows": "Arab Standard Time",
+                "territory": "SA",
+                "type": "Asia/Riyadh"
+            },
+            {
+                "windows": "Arab Standard Time",
+                "territory": "YE",
+                "type": "Asia/Aden"
+            },
+            {
+                "windows": "Belarus Standard Time",
+                "territory": "001",
+                "type": "Europe/Minsk"
+            },
+            {
+                "windows": "Belarus Standard Time",
+                "territory": "BY",
+                "type": "Europe/Minsk"
+            },
+            {
+                "windows": "Russian Standard Time",
+                "territory": "001",
+                "type": "Europe/Moscow"
+            },
+            {
+                "windows": "Russian Standard Time",
+                "territory": "RU",
+                "type": "Europe/Moscow Europe/Kirov"
+            },
+            {
+                "windows": "Russian Standard Time",
+                "territory": "UA",
+                "type": "Europe/Simferopol"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "001",
+                "type": "Africa/Nairobi"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/Syowa"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "DJ",
+                "type": "Africa/Djibouti"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "ER",
+                "type": "Africa/Asmera"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "ET",
+                "type": "Africa/Addis_Ababa"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "KE",
+                "type": "Africa/Nairobi"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "KM",
+                "type": "Indian/Comoro"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "MG",
+                "type": "Indian/Antananarivo"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "SO",
+                "type": "Africa/Mogadishu"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "TZ",
+                "type": "Africa/Dar_es_Salaam"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "UG",
+                "type": "Africa/Kampala"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "YT",
+                "type": "Indian/Mayotte"
+            },
+            {
+                "windows": "E. Africa Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-3"
+            },
+            {
+                "windows": "Iran Standard Time",
+                "territory": "001",
+                "type": "Asia/Tehran"
+            },
+            {
+                "windows": "Iran Standard Time",
+                "territory": "IR",
+                "type": "Asia/Tehran"
+            },
+            {
+                "windows": "Arabian Standard Time",
+                "territory": "001",
+                "type": "Asia/Dubai"
+            },
+            {
+                "windows": "Arabian Standard Time",
+                "territory": "AE",
+                "type": "Asia/Dubai"
+            },
+            {
+                "windows": "Arabian Standard Time",
+                "territory": "OM",
+                "type": "Asia/Muscat"
+            },
+            {
+                "windows": "Arabian Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-4"
+            },
+            {
+                "windows": "Astrakhan Standard Time",
+                "territory": "001",
+                "type": "Europe/Astrakhan"
+            },
+            {
+                "windows": "Astrakhan Standard Time",
+                "territory": "RU",
+                "type": "Europe/Astrakhan Europe/Ulyanovsk"
+            },
+            {
+                "windows": "Azerbaijan Standard Time",
+                "territory": "001",
+                "type": "Asia/Baku"
+            },
+            {
+                "windows": "Azerbaijan Standard Time",
+                "territory": "AZ",
+                "type": "Asia/Baku"
+            },
+            {
+                "windows": "Russia Time Zone 3",
+                "territory": "001",
+                "type": "Europe/Samara"
+            },
+            {
+                "windows": "Russia Time Zone 3",
+                "territory": "RU",
+                "type": "Europe/Samara"
+            },
+            {
+                "windows": "Mauritius Standard Time",
+                "territory": "001",
+                "type": "Indian/Mauritius"
+            },
+            {
+                "windows": "Mauritius Standard Time",
+                "territory": "MU",
+                "type": "Indian/Mauritius"
+            },
+            {
+                "windows": "Mauritius Standard Time",
+                "territory": "RE",
+                "type": "Indian/Reunion"
+            },
+            {
+                "windows": "Mauritius Standard Time",
+                "territory": "SC",
+                "type": "Indian/Mahe"
+            },
+            {
+                "windows": "Saratov Standard Time",
+                "territory": "001",
+                "type": "Europe/Saratov"
+            },
+            {
+                "windows": "Saratov Standard Time",
+                "territory": "RU",
+                "type": "Europe/Saratov"
+            },
+            {
+                "windows": "Georgian Standard Time",
+                "territory": "001",
+                "type": "Asia/Tbilisi"
+            },
+            {
+                "windows": "Georgian Standard Time",
+                "territory": "GE",
+                "type": "Asia/Tbilisi"
+            },
+            {
+                "windows": "Volgograd Standard Time",
+                "territory": "001",
+                "type": "Europe/Volgograd"
+            },
+            {
+                "windows": "Volgograd Standard Time",
+                "territory": "RU",
+                "type": "Europe/Volgograd"
+            },
+            {
+                "windows": "Caucasus Standard Time",
+                "territory": "001",
+                "type": "Asia/Yerevan"
+            },
+            {
+                "windows": "Caucasus Standard Time",
+                "territory": "AM",
+                "type": "Asia/Yerevan"
+            },
+            {
+                "windows": "Afghanistan Standard Time",
+                "territory": "001",
+                "type": "Asia/Kabul"
+            },
+            {
+                "windows": "Afghanistan Standard Time",
+                "territory": "AF",
+                "type": "Asia/Kabul"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "001",
+                "type": "Asia/Tashkent"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/Mawson"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "KZ",
+                "type": "Asia/Oral Asia/Aqtau Asia/Aqtobe Asia/Atyrau"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "MV",
+                "type": "Indian/Maldives"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "TF",
+                "type": "Indian/Kerguelen"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "TJ",
+                "type": "Asia/Dushanbe"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "TM",
+                "type": "Asia/Ashgabat"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "UZ",
+                "type": "Asia/Tashkent Asia/Samarkand"
+            },
+            {
+                "windows": "West Asia Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-5"
+            },
+            {
+                "windows": "Ekaterinburg Standard Time",
+                "territory": "001",
+                "type": "Asia/Yekaterinburg"
+            },
+            {
+                "windows": "Ekaterinburg Standard Time",
+                "territory": "RU",
+                "type": "Asia/Yekaterinburg"
+            },
+            {
+                "windows": "Pakistan Standard Time",
+                "territory": "001",
+                "type": "Asia/Karachi"
+            },
+            {
+                "windows": "Pakistan Standard Time",
+                "territory": "PK",
+                "type": "Asia/Karachi"
+            },
+            {
+                "windows": "Qyzylorda Standard Time",
+                "territory": "001",
+                "type": "Asia/Qyzylorda"
+            },
+            {
+                "windows": "Qyzylorda Standard Time",
+                "territory": "KZ",
+                "type": "Asia/Qyzylorda"
+            },
+            {
+                "windows": "India Standard Time",
+                "territory": "001",
+                "type": "Asia/Calcutta"
+            },
+            {
+                "windows": "India Standard Time",
+                "territory": "IN",
+                "type": "Asia/Calcutta"
+            },
+            {
+                "windows": "Sri Lanka Standard Time",
+                "territory": "001",
+                "type": "Asia/Colombo"
+            },
+            {
+                "windows": "Sri Lanka Standard Time",
+                "territory": "LK",
+                "type": "Asia/Colombo"
+            },
+            {
+                "windows": "Nepal Standard Time",
+                "territory": "001",
+                "type": "Asia/Katmandu"
+            },
+            {
+                "windows": "Nepal Standard Time",
+                "territory": "NP",
+                "type": "Asia/Katmandu"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "001",
+                "type": "Asia/Almaty"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/Vostok"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "CN",
+                "type": "Asia/Urumqi"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "IO",
+                "type": "Indian/Chagos"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "KG",
+                "type": "Asia/Bishkek"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "KZ",
+                "type": "Asia/Almaty Asia/Qostanay"
+            },
+            {
+                "windows": "Central Asia Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-6"
+            },
+            {
+                "windows": "Bangladesh Standard Time",
+                "territory": "001",
+                "type": "Asia/Dhaka"
+            },
+            {
+                "windows": "Bangladesh Standard Time",
+                "territory": "BD",
+                "type": "Asia/Dhaka"
+            },
+            {
+                "windows": "Bangladesh Standard Time",
+                "territory": "BT",
+                "type": "Asia/Thimphu"
+            },
+            {
+                "windows": "Omsk Standard Time",
+                "territory": "001",
+                "type": "Asia/Omsk"
+            },
+            {
+                "windows": "Omsk Standard Time",
+                "territory": "RU",
+                "type": "Asia/Omsk"
+            },
+            {
+                "windows": "Myanmar Standard Time",
+                "territory": "001",
+                "type": "Asia/Rangoon"
+            },
+            {
+                "windows": "Myanmar Standard Time",
+                "territory": "CC",
+                "type": "Indian/Cocos"
+            },
+            {
+                "windows": "Myanmar Standard Time",
+                "territory": "MM",
+                "type": "Asia/Rangoon"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "001",
+                "type": "Asia/Bangkok"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/Davis"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "CX",
+                "type": "Indian/Christmas"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "ID",
+                "type": "Asia/Jakarta Asia/Pontianak"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "KH",
+                "type": "Asia/Phnom_Penh"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "LA",
+                "type": "Asia/Vientiane"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "TH",
+                "type": "Asia/Bangkok"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "VN",
+                "type": "Asia/Saigon"
+            },
+            {
+                "windows": "SE Asia Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-7"
+            },
+            {
+                "windows": "Altai Standard Time",
+                "territory": "001",
+                "type": "Asia/Barnaul"
+            },
+            {
+                "windows": "Altai Standard Time",
+                "territory": "RU",
+                "type": "Asia/Barnaul"
+            },
+            {
+                "windows": "W. Mongolia Standard Time",
+                "territory": "001",
+                "type": "Asia/Hovd"
+            },
+            {
+                "windows": "W. Mongolia Standard Time",
+                "territory": "MN",
+                "type": "Asia/Hovd"
+            },
+            {
+                "windows": "North Asia Standard Time",
+                "territory": "001",
+                "type": "Asia/Krasnoyarsk"
+            },
+            {
+                "windows": "North Asia Standard Time",
+                "territory": "RU",
+                "type": "Asia/Krasnoyarsk Asia/Novokuznetsk"
+            },
+            {
+                "windows": "N. Central Asia Standard Time",
+                "territory": "001",
+                "type": "Asia/Novosibirsk"
+            },
+            {
+                "windows": "N. Central Asia Standard Time",
+                "territory": "RU",
+                "type": "Asia/Novosibirsk"
+            },
+            {
+                "windows": "Tomsk Standard Time",
+                "territory": "001",
+                "type": "Asia/Tomsk"
+            },
+            {
+                "windows": "Tomsk Standard Time",
+                "territory": "RU",
+                "type": "Asia/Tomsk"
+            },
+            {
+                "windows": "China Standard Time",
+                "territory": "001",
+                "type": "Asia/Shanghai"
+            },
+            {
+                "windows": "China Standard Time",
+                "territory": "CN",
+                "type": "Asia/Shanghai"
+            },
+            {
+                "windows": "China Standard Time",
+                "territory": "HK",
+                "type": "Asia/Hong_Kong"
+            },
+            {
+                "windows": "China Standard Time",
+                "territory": "MO",
+                "type": "Asia/Macau"
+            },
+            {
+                "windows": "North Asia East Standard Time",
+                "territory": "001",
+                "type": "Asia/Irkutsk"
+            },
+            {
+                "windows": "North Asia East Standard Time",
+                "territory": "RU",
+                "type": "Asia/Irkutsk"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "001",
+                "type": "Asia/Singapore"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "BN",
+                "type": "Asia/Brunei"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "ID",
+                "type": "Asia/Makassar"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "MY",
+                "type": "Asia/Kuala_Lumpur Asia/Kuching"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "PH",
+                "type": "Asia/Manila"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "SG",
+                "type": "Asia/Singapore"
+            },
+            {
+                "windows": "Singapore Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-8"
+            },
+            {
+                "windows": "W. Australia Standard Time",
+                "territory": "001",
+                "type": "Australia/Perth"
+            },
+            {
+                "windows": "W. Australia Standard Time",
+                "territory": "AU",
+                "type": "Australia/Perth"
+            },
+            {
+                "windows": "Taipei Standard Time",
+                "territory": "001",
+                "type": "Asia/Taipei"
+            },
+            {
+                "windows": "Taipei Standard Time",
+                "territory": "TW",
+                "type": "Asia/Taipei"
+            },
+            {
+                "windows": "Ulaanbaatar Standard Time",
+                "territory": "001",
+                "type": "Asia/Ulaanbaatar"
+            },
+            {
+                "windows": "Ulaanbaatar Standard Time",
+                "territory": "MN",
+                "type": "Asia/Ulaanbaatar Asia/Choibalsan"
+            },
+            {
+                "windows": "Aus Central W. Standard Time",
+                "territory": "001",
+                "type": "Australia/Eucla"
+            },
+            {
+                "windows": "Aus Central W. Standard Time",
+                "territory": "AU",
+                "type": "Australia/Eucla"
+            },
+            {
+                "windows": "Transbaikal Standard Time",
+                "territory": "001",
+                "type": "Asia/Chita"
+            },
+            {
+                "windows": "Transbaikal Standard Time",
+                "territory": "RU",
+                "type": "Asia/Chita"
+            },
+            {
+                "windows": "Tokyo Standard Time",
+                "territory": "001",
+                "type": "Asia/Tokyo"
+            },
+            {
+                "windows": "Tokyo Standard Time",
+                "territory": "ID",
+                "type": "Asia/Jayapura"
+            },
+            {
+                "windows": "Tokyo Standard Time",
+                "territory": "JP",
+                "type": "Asia/Tokyo"
+            },
+            {
+                "windows": "Tokyo Standard Time",
+                "territory": "PW",
+                "type": "Pacific/Palau"
+            },
+            {
+                "windows": "Tokyo Standard Time",
+                "territory": "TL",
+                "type": "Asia/Dili"
+            },
+            {
+                "windows": "Tokyo Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-9"
+            },
+            {
+                "windows": "North Korea Standard Time",
+                "territory": "001",
+                "type": "Asia/Pyongyang"
+            },
+            {
+                "windows": "North Korea Standard Time",
+                "territory": "KP",
+                "type": "Asia/Pyongyang"
+            },
+            {
+                "windows": "Korea Standard Time",
+                "territory": "001",
+                "type": "Asia/Seoul"
+            },
+            {
+                "windows": "Korea Standard Time",
+                "territory": "KR",
+                "type": "Asia/Seoul"
+            },
+            {
+                "windows": "Yakutsk Standard Time",
+                "territory": "001",
+                "type": "Asia/Yakutsk"
+            },
+            {
+                "windows": "Yakutsk Standard Time",
+                "territory": "RU",
+                "type": "Asia/Yakutsk Asia/Khandyga"
+            },
+            {
+                "windows": "Cen. Australia Standard Time",
+                "territory": "001",
+                "type": "Australia/Adelaide"
+            },
+            {
+                "windows": "Cen. Australia Standard Time",
+                "territory": "AU",
+                "type": "Australia/Adelaide Australia/Broken_Hill"
+            },
+            {
+                "windows": "AUS Central Standard Time",
+                "territory": "001",
+                "type": "Australia/Darwin"
+            },
+            {
+                "windows": "AUS Central Standard Time",
+                "territory": "AU",
+                "type": "Australia/Darwin"
+            },
+            {
+                "windows": "E. Australia Standard Time",
+                "territory": "001",
+                "type": "Australia/Brisbane"
+            },
+            {
+                "windows": "E. Australia Standard Time",
+                "territory": "AU",
+                "type": "Australia/Brisbane Australia/Lindeman"
+            },
+            {
+                "windows": "AUS Eastern Standard Time",
+                "territory": "001",
+                "type": "Australia/Sydney"
+            },
+            {
+                "windows": "AUS Eastern Standard Time",
+                "territory": "AU",
+                "type": "Australia/Sydney Australia/Melbourne"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "001",
+                "type": "Pacific/Port_Moresby"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/DumontDUrville"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "FM",
+                "type": "Pacific/Truk"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "GU",
+                "type": "Pacific/Guam"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "MP",
+                "type": "Pacific/Saipan"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "PG",
+                "type": "Pacific/Port_Moresby"
+            },
+            {
+                "windows": "West Pacific Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-10"
+            },
+            {
+                "windows": "Tasmania Standard Time",
+                "territory": "001",
+                "type": "Australia/Hobart"
+            },
+            {
+                "windows": "Tasmania Standard Time",
+                "territory": "AU",
+                "type": "Australia/Hobart Australia/Currie Antarctica/Macquarie"
+            },
+            {
+                "windows": "Vladivostok Standard Time",
+                "territory": "001",
+                "type": "Asia/Vladivostok"
+            },
+            {
+                "windows": "Vladivostok Standard Time",
+                "territory": "RU",
+                "type": "Asia/Vladivostok Asia/Ust-Nera"
+            },
+            {
+                "windows": "Lord Howe Standard Time",
+                "territory": "001",
+                "type": "Australia/Lord_Howe"
+            },
+            {
+                "windows": "Lord Howe Standard Time",
+                "territory": "AU",
+                "type": "Australia/Lord_Howe"
+            },
+            {
+                "windows": "Bougainville Standard Time",
+                "territory": "001",
+                "type": "Pacific/Bougainville"
+            },
+            {
+                "windows": "Bougainville Standard Time",
+                "territory": "PG",
+                "type": "Pacific/Bougainville"
+            },
+            {
+                "windows": "Russia Time Zone 10",
+                "territory": "001",
+                "type": "Asia/Srednekolymsk"
+            },
+            {
+                "windows": "Russia Time Zone 10",
+                "territory": "RU",
+                "type": "Asia/Srednekolymsk"
+            },
+            {
+                "windows": "Magadan Standard Time",
+                "territory": "001",
+                "type": "Asia/Magadan"
+            },
+            {
+                "windows": "Magadan Standard Time",
+                "territory": "RU",
+                "type": "Asia/Magadan"
+            },
+            {
+                "windows": "Norfolk Standard Time",
+                "territory": "001",
+                "type": "Pacific/Norfolk"
+            },
+            {
+                "windows": "Norfolk Standard Time",
+                "territory": "NF",
+                "type": "Pacific/Norfolk"
+            },
+            {
+                "windows": "Sakhalin Standard Time",
+                "territory": "001",
+                "type": "Asia/Sakhalin"
+            },
+            {
+                "windows": "Sakhalin Standard Time",
+                "territory": "RU",
+                "type": "Asia/Sakhalin"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "001",
+                "type": "Pacific/Guadalcanal"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/Casey"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "FM",
+                "type": "Pacific/Ponape Pacific/Kosrae"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "NC",
+                "type": "Pacific/Noumea"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "SB",
+                "type": "Pacific/Guadalcanal"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "VU",
+                "type": "Pacific/Efate"
+            },
+            {
+                "windows": "Central Pacific Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-11"
+            },
+            {
+                "windows": "Russia Time Zone 11",
+                "territory": "001",
+                "type": "Asia/Kamchatka"
+            },
+            {
+                "windows": "Russia Time Zone 11",
+                "territory": "RU",
+                "type": "Asia/Kamchatka Asia/Anadyr"
+            },
+            {
+                "windows": "New Zealand Standard Time",
+                "territory": "001",
+                "type": "Pacific/Auckland"
+            },
+            {
+                "windows": "New Zealand Standard Time",
+                "territory": "AQ",
+                "type": "Antarctica/McMurdo"
+            },
+            {
+                "windows": "New Zealand Standard Time",
+                "territory": "NZ",
+                "type": "Pacific/Auckland"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "001",
+                "type": "Etc/GMT-12"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "KI",
+                "type": "Pacific/Tarawa"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "MH",
+                "type": "Pacific/Majuro Pacific/Kwajalein"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "NR",
+                "type": "Pacific/Nauru"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "TV",
+                "type": "Pacific/Funafuti"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "UM",
+                "type": "Pacific/Wake"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "WF",
+                "type": "Pacific/Wallis"
+            },
+            {
+                "windows": "UTC+12",
+                "territory": "ZZ",
+                "type": "Etc/GMT-12"
+            },
+            {
+                "windows": "Fiji Standard Time",
+                "territory": "001",
+                "type": "Pacific/Fiji"
+            },
+            {
+                "windows": "Fiji Standard Time",
+                "territory": "FJ",
+                "type": "Pacific/Fiji"
+            },
+            {
+                "windows": "Chatham Islands Standard Time",
+                "territory": "001",
+                "type": "Pacific/Chatham"
+            },
+            {
+                "windows": "Chatham Islands Standard Time",
+                "territory": "NZ",
+                "type": "Pacific/Chatham"
+            },
+            {
+                "windows": "UTC+13",
+                "territory": "001",
+                "type": "Etc/GMT-13"
+            },
+            {
+                "windows": "UTC+13",
+                "territory": "KI",
+                "type": "Pacific/Enderbury"
+            },
+            {
+                "windows": "UTC+13",
+                "territory": "TK",
+                "type": "Pacific/Fakaofo"
+            },
+            {
+                "windows": "UTC+13",
+                "territory": "ZZ",
+                "type": "Etc/GMT-13"
+            },
+            {
+                "windows": "Tonga Standard Time",
+                "territory": "001",
+                "type": "Pacific/Tongatapu"
+            },
+            {
+                "windows": "Tonga Standard Time",
+                "territory": "TO",
+                "type": "Pacific/Tongatapu"
+            },
+            {
+                "windows": "Samoa Standard Time",
+                "territory": "001",
+                "type": "Pacific/Apia"
+            },
+            {
+                "windows": "Samoa Standard Time",
+                "territory": "WS",
+                "type": "Pacific/Apia"
+            },
+            {
+                "windows": "Line Islands Standard Time",
+                "territory": "001",
+                "type": "Pacific/Kiritimati"
+            },
+            {
+                "windows": "Line Islands Standard Time",
+                "territory": "KI",
+                "type": "Pacific/Kiritimati"
+            },
+            {
+                "windows": "Line Islands Standard Time",
+                "territory": "ZZ",
+                "type": "Etc/GMT-14"
+            }
+        ],
+        "windowsVersion": "7e11800",
+        "typeVersion": "2021a"
+    }
+}
