@@ -43,3 +43,25 @@ update_dialog "Installing Zoom..." "$ICON_INSTALL"
 # --- All Done ---
 update_dialog "Setup Complete!" "$ICON_FINISH"
 echo "Setup complete." >> "$LOG_FILE"
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.company.enrollment</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/usr/local/org/enrollment.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/enrollment_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/enrollment_stderr.log</string>
+</dict>
+</plist>
