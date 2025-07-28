@@ -1,48 +1,69 @@
 #!/bin/bash
 
-# Set up
-LOG_FILE="/var/tmp/dialog.log"
-ICON_INSTALL="/System/Library/CoreServices/Installer.app/Contents/Resources/Installer.icns"
-ICON_FINISH="/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/CheckMark.icns"
-DIALOG_BIN="/usr/local/bin/dialog"
+# Define script variables
+logFile="/var/tmp/dialog.log"
+DIALOG="/usr/local/bin/dialog"
+loggedInUser=$( echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ { print $3 }' )
+loggedInUserFullName=$( id -F "${loggedInUser}" )
+loggedInUserFirstName=$( echo "$loggedInUserFullName" | sed -E 's/^.*, // ; s/([^ ]*).*/\1/' | sed 's/\(.\{25\}\).*/\1…/' | awk '{print ( $0 == toupper($0) ? toupper(substr($0,1,1))substr(tolower($0),2) : toupper(substr($0,1,1))substr($0,2) )}' )
+userID=$(id -u "$loggedInUser")
 
-# Clear previous log
-rm -f "$LOG_FILE"
-touch "$LOG_FILE"
+# Get the current hour (24-hour format)
+currentHour=$(date +"%H")
 
-# Launch SwiftDialog
-"$DIALOG_BIN" \
-  --title "Setting Up Your Mac" \
+# Set greeting based on time
+if [ "$currentHour" -ge 5 ] && [ "$currentHour" -lt 12 ]; then
+    timeGreeting="Good morning"
+elif [ "$currentHour" -ge 12 ] && [ "$currentHour" -lt 17 ]; then
+    timeGreeting="Good afternoon"
+else
+    timeGreeting="Good evening"
+fi
+
+rm -f "$logFile"
+touch "$logFile"
+
+# Launch SwiftDialog in progress mode as user
+sudo -u "$loggedInUser" "$DIALOG" \
+  --title none \
+  --bannerimage /usr/local/org/banner.jpeg \
+  --bannerheight 200 \
   --progress \
-  --icon "$ICON_INSTALL" \
-  --message "Starting setup..." \
-  --commandfile "$LOG_FILE" \
-  --quitonlastline \
-  &
+  --progresstext "Getting ready..." \
+  --message "${timeGreeting}, ${loggedInUserFirstName}! <br><br> Welcome! We are finishing the setup of your Mac.<br><br>It will be ready to use shortly." \
+  --messagefont size=24 \
+  --icon SF=pencil.and.list.clipboard \
+  --appearance dark \
+  --background colour=black \
+  --commandfile "$logFile" \
+  --width 750 \
+  --height 450 \
+  --button1text none \
+  --blurscreen \
+  --quitonlastline &
 DIALOG_PID=$!
 
-# Function to update the dialog
-update_dialog() {
-  local message="$1"
-  local icon="$2"
-  echo '{"progressText": "'"$message"'", "icon": "'"$icon"'"}' >> "$LOG_FILE"
-}
-
-# --- Step 1: Chrome ---
-update_dialog "Installing Google Chrome..." "$ICON_INSTALL"
-/usr/local/bin/jamf policy -event install-chrome
-
-# --- Step 2: Microsoft Office ---
-update_dialog "Installing Microsoft Office..." "$ICON_INSTALL"
-/usr/local/bin/jamf policy -event install-office
-
-# --- Step 3: Zoom ---
-update_dialog "Installing Zoom..." "$ICON_INSTALL"
-/usr/local/bin/jamf policy -event install-zoom
-
-# --- All Done ---
-update_dialog "Setup Complete!" "$ICON_FINISH"
-echo "Setup complete." >> "$LOG_FILE"
+sleep 4
+echo "progresstext: Configuring default dock..." >> "$logFile"
+echo "icon: SF=dock.arrow.down.rectangle" >> "$logFile"
+#sudo jamf policy -event 
+sleep 2
+echo "progresstext: Installing application..." >> "$logFile"
+echo "icon: SF=macbook" >> "$logFile"
+#sudo jamf policy -event 
+sleep 2
+echo "progresstext: Verifying configuration..." >> "$logFile"
+echo "icon: SF=checklist" >> "$logFile"
+#sudo jamf policy -event 
+sleep 2
+echo "progress: hide" >> "$logFile"
+echo "message: Configuration Complete!" >> "$logFile"
+echo "icon: SF=checkmark.seal,colour=green" >> "$logFile"
+#sudo jamf policy -event 
+sleep 2
+echo "message: + <br><br> Enjoy your Mac, and have a great $( date +'%A' )!" >> "$logFile"
+sleep 4
+echo "quit:" >> "$logFile"
 
 
 
