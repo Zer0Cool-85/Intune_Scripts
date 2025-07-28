@@ -103,3 +103,20 @@ exit 0
     <string>Aqua</string>
 </dict>
 </plist>
+
+#!/bin/bash
+
+# Target script you want to allow
+SUDO_SCRIPT="/usr/local/org/enrollment-root.sh"
+SUDOERS_FILE="/etc/sudoers.d/enrollment"
+
+# Set who can run it
+# Option A: Allow ALL users (use with caution)
+echo "ALL ALL=(ALL) NOPASSWD: $SUDO_SCRIPT" > "$SUDOERS_FILE"
+
+# Option B: Only allow admin group (safer alternative)
+# echo "%admin ALL=(ALL) NOPASSWD: $SUDO_SCRIPT" > "$SUDOERS_FILE"
+
+# Set correct permissions
+chmod 440 "$SUDOERS_FILE"
+chown root:wheel "$SUDOERS_FILE"
