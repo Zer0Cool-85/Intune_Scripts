@@ -120,3 +120,31 @@ echo "ALL ALL=(ALL) NOPASSWD: $SUDO_SCRIPT" > "$SUDOERS_FILE"
 # Set correct permissions
 chmod 440 "$SUDOERS_FILE"
 chown root:wheel "$SUDOERS_FILE"
+
+
+
+#!/bin/bash
+
+# Paths
+PLIST="/Library/LaunchAgents/com.company.enrollment.plist"
+SUDOERS_FILE="/etc/sudoers.d/enrollment"
+MARKER="/var/db/com.company.enrollment.complete"
+
+# Unload and remove LaunchAgent
+if [ -f "$PLIST" ]; then
+    USER_ID=$(stat -f%u /dev/console)
+    launchctl bootout gui/"$USER_ID" "$PLIST" 2>/dev/null
+    rm -f "$PLIST"
+fi
+
+# Remove sudoers rule
+if [ -f "$SUDOERS_FILE" ]; then
+    rm -f "$SUDOERS_FILE"
+fi
+
+# Remove marker
+if [ -f "$MARKER" ]; then
+    rm -f "$MARKER"
+fi
+
+exit 0
