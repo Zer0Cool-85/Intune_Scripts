@@ -7,53 +7,99 @@
 $inputXML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PC Information"
+        Title="PC Information 2.1"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="#CC1E1E1E"
-        Width="600" Height="500"
+        Background="#DD2D2D30"
+        Width="600"
+        Height="600"
         ResizeMode="NoResize">
+
     <Border CornerRadius="12" BorderThickness="1" BorderBrush="#44FFFFFF" Background="#DD2D2D30">
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
 
             <!-- Header -->
             <DockPanel Grid.Row="0">
-                <TextBlock Text="💻 PC Information"
+                <TextBlock Text="💻 PC Information 2.1" 
                            FontSize="20"
-                           Foreground="White"
-                           FontWeight="Bold"
+                           FontWeight="Bold" 
+                           Foreground="White" 
                            VerticalAlignment="Center"/>
             </DockPanel>
 
-            <!-- Content -->
-            <StackPanel Grid.Row="1" Margin="10" VerticalAlignment="Top">
-                <TextBlock Text="Computer Name:" Foreground="LightGray" FontSize="14"/>
-                <TextBox Name="PCName" Margin="0,0,0,10" FontSize="14" IsReadOnly="True"/>
+            <!-- Main Content -->
+            <Grid Grid.Row="1" Margin="0,10,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/> <!-- PC Name -->
+                    <RowDefinition Height="30"/> <!-- OS -->
+                    <RowDefinition Height="30"/> <!-- OS Arch -->
+                    <RowDefinition Height="30"/> <!-- OS Version -->
+                    <RowDefinition Height="30"/> <!-- OS Build -->
+                    <RowDefinition Height="30"/> <!-- Last Reboot -->
+                    <RowDefinition Height="30"/> <!-- Make -->
+                    <RowDefinition Height="30"/> <!-- Model -->
+                    <RowDefinition Height="30"/> <!-- Serial -->
+                    <RowDefinition Height="30"/> <!-- Memory -->
+                    <RowDefinition Height="30"/> <!-- Free Space -->
+                    <RowDefinition Height="30"/> <!-- IP Address -->
+                    <RowDefinition Height="*"/>  <!-- MAC Address / List -->
+                </Grid.RowDefinitions>
 
-                <TextBlock Text="Operating System:" Foreground="LightGray" FontSize="14"/>
-                <TextBox Name="OSName" Margin="0,0,0,10" FontSize="14" IsReadOnly="True"/>
+                <!-- Labels -->
+                <Label Grid.Row="0" Grid.Column="0" Content="Computer Name:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="1" Grid.Column="0" Content="Operating System:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="OS Architecture:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="OS Version:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="4" Grid.Column="0" Content="OS Build:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="5" Grid.Column="0" Content="Last Reboot:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="6" Grid.Column="0" Content="Make:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="7" Grid.Column="0" Content="Model Name:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="8" Grid.Column="0" Content="Serial Number:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="9" Grid.Column="0" Content="Memory:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="10" Grid.Column="0" Content="Free Space:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="11" Grid.Column="0" Content="IP Address:" Foreground="LightGray" HorizontalAlignment="Right"/>
+                <Label Grid.Row="12" Grid.Column="0" Content="Network Adapter(s):" Foreground="LightGray" HorizontalAlignment="Right"/>
 
-                <TextBlock Text="CPU:" Foreground="LightGray" FontSize="14"/>
-                <TextBox Name="CPUName" Margin="0,0,0,10" FontSize="14" IsReadOnly="True"/>
+                <!-- Textboxes -->
+                <TextBox x:Name="PCName" Grid.Row="0" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="OS" Grid.Row="1" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="OSArch" Grid.Row="2" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="OSVersion" Grid.Row="3" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="OSBuild" Grid.Row="4" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="LastReboot" Grid.Row="5" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="Make" Grid.Row="6" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="ModelName" Grid.Row="7" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="Serial" Grid.Row="8" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="Memory" Grid.Row="9" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="FreeSpace" Grid.Row="10" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="IPAddress" Grid.Row="11" Grid.Column="1" IsReadOnly="True"/>
+                
+                <!-- MAC Address DataGrid -->
+                <DataGrid x:Name="MACAddress" Grid.Row="12" Grid.Column="1" AutoGenerateColumns="True"/>
+            </Grid>
 
-                <TextBlock Text="RAM:" Foreground="LightGray" FontSize="14"/>
-                <TextBox Name="RAMAmount" Margin="0,0,0,10" FontSize="14" IsReadOnly="True"/>
-            </StackPanel>
-
-            <!-- Footer -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Button Name="Button_Exit" Content="Close" Width="80" Margin="0,0,10,0"/>
+            <!-- Footer Buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="10">
+                <Button x:Name="Button_IPConfig" Content="IP Config" Width="100"/>
+                <Button x:Name="Button_Copy" Content="Copy" Width="100"/>
+                <Button x:Name="Button_Refresh" Content="Refresh" Width="100"/>
+                <Button x:Name="Button_Exit" Content="Exit" Width="100"/>
             </StackPanel>
         </Grid>
     </Border>
 </Window>
 "@
+
 
 # Clean up XAML safely
 
