@@ -1,108 +1,83 @@
-<Window 
+<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Modern WPF Window" 
-    Height="500" Width="700" 
+    x:Name="MainWindow"
+    Title="PC Info"
+    Height="500"
+    Width="800"
     WindowStartupLocation="CenterScreen"
-    FontFamily="Segoe UI"
-    AllowsTransparency="True"
     WindowStyle="None"
+    AllowsTransparency="True"
     Background="Transparent">
 
-    <Window.Resources>
-        <!-- Modern Button -->
-        <Style x:Key="ModernButton" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="#4A90E2"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.2"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#357ABD"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#2C5E99"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- TextBox -->
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value="3"/>
-            <Setter Property="Padding" Value="6"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#CCC"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-        </Style>
-
-        <!-- DataGrid -->
-        <Style TargetType="DataGrid">
-            <Setter Property="AlternatingRowBackground" Value="#F5F5F5"/>
-            <Setter Property="RowBackground" Value="White"/>
-            <Setter Property="GridLinesVisibility" Value="None"/>
-            <Setter Property="BorderBrush" Value="#DDD"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-    </Window.Resources>
-
-    <!-- Main Border for Rounded Window -->
-    <Border CornerRadius="12" Background="#FDFDFD" Padding="0" SnapsToDevicePixels="True" >
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.25"/>
-        </Border.Effect>
-
+    <Border CornerRadius="12" Background="#f3f3f3" BorderBrush="#d0d0d0" BorderThickness="1" SnapsToDevicePixels="True">
         <Grid>
-            <!-- Background Gradient -->
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#FAFAFA" Offset="0"/>
-                    <GradientStop Color="#EAEAEA" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
+            <!-- Drop shadow effect -->
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Opacity="0.25"/>
+            </Border.Effect>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/> <!-- Title Bar -->
-                <RowDefinition Height="*"/>  <!-- Main Content -->
-                <RowDefinition Height="50"/> <!-- Footer -->
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
             <!-- Custom Title Bar -->
-            <DockPanel Grid.Row="0" Background="#FFFFFF" LastChildFill="True">
-                <TextBlock Text="Windows 11 Style Form" VerticalAlignment="Center" Margin="10,0,0,0" FontWeight="Bold" FontSize="14"/>
-                <Button Content="✕" Width="35" Height="35" Background="Transparent" BorderThickness="0" Foreground="#666"
-                        HorizontalAlignment="Right" Click="Close_Click" Cursor="Hand"/>
-            </DockPanel>
+            <Grid Background="#ffffff" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="PC Info" VerticalAlignment="Center" Margin="15,0,0,0" FontWeight="Bold" FontSize="16" Foreground="#444" FontFamily="Segoe UI"/>
+                <Button x:Name="Button_Close" Grid.Column="1" Content="✕" Width="48" Height="48" Background="Transparent" BorderThickness="0"
+                        Foreground="#666" FontSize="14" Cursor="Hand"
+                        ToolTip="Close"/>
+            </Grid>
 
             <!-- Main Content -->
-            <StackPanel Grid.Row="1" Margin="20" Orientation="Vertical" Spacing="10">
-                <TextBlock Text="Enter Details:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                <TextBox Width="250" PlaceholderText="Type something..."/>
-                <Button Content="Submit" Style="{StaticResource ModernButton}" Width="120"/>
-                <DataGrid Height="200" Margin="0,10,0,0"/>
-            </StackPanel>
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Margin="20" Orientation="Vertical" Spacing="10">
+
+                    <TextBlock Text="System Information" FontSize="20" FontWeight="SemiBold" Foreground="#333" FontFamily="Segoe UI" Margin="0,0,0,10"/>
+
+                    <Border Background="#fff" CornerRadius="8" Padding="15" BorderBrush="#ddd" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Computer Name:" FontWeight="Bold" FontSize="14" Foreground="#555"/>
+                            <TextBlock x:Name="Text_ComputerName" Text="Loading..." FontSize="14" Foreground="#111"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#fff" CornerRadius="8" Padding="15" BorderBrush="#ddd" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="OS Version:" FontWeight="Bold" FontSize="14" Foreground="#555"/>
+                            <TextBlock x:Name="Text_OSVersion" Text="Loading..." FontSize="14" Foreground="#111"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#fff" CornerRadius="8" Padding="15" BorderBrush="#ddd" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Memory:" FontWeight="Bold" FontSize="14" Foreground="#555"/>
+                            <TextBlock x:Name="Text_Memory" Text="Loading..." FontSize="14" Foreground="#111"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
 
             <!-- Footer -->
-            <DockPanel Grid.Row="2" Background="#F8F8F8" Height="50" VerticalAlignment="Center" Padding="10,0">
-                <TextBlock Text="© 2025 Your Company" VerticalAlignment="Center" Foreground="#777"/>
-            </DockPanel>
-
+            <Grid Grid.Row="2" Background="#fafafa">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="© 2025 My Company" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#888" FontSize="12"/>
+                <Button x:Name="Button_Exit" Content="Exit" Grid.Column="1" Margin="10" Background="#0078d4" Foreground="White" BorderThickness="0" CornerRadius="6" Cursor="Hand"/>
+            </Grid>
         </Grid>
     </Border>
 </Window>
+
+
+$WPFButton_Close.Add_Click({ $Form.Close() })
+$WPFButton_Exit.Add_Click({ $Form.Close() })
