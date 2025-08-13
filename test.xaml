@@ -81,3 +81,24 @@
 
 $WPFButton_Close.Add_Click({ $Form.Close() })
 $WPFButton_Exit.Add_Click({ $Form.Close() })
+
+# Clean up XAML safely without destroying the <Window> attributes
+$inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N'
+
+[void][System.Reflection.Assembly]::LoadWithPartialName('PresentationFramework')
+
+# Load the XML
+[xml]$XamlXml = $inputXML
+
+# Create the reader from the correct variable
+$reader = New-Object System.Xml.XmlNodeReader $XamlXml
+try {
+    $Form = [Windows.Markup.XamlReader]::Load($reader)
+} catch {
+    Write-Host "Unable to load Windows.Markup.XamlReader. Double-check syntax and ensure .NET is installed."
+}
+
+# Load named elements into WPF variables
+$XamlXml.SelectNodes("//*[@Name]") | ForEach-Object {
+    Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name)
+}
