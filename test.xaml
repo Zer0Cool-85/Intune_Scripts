@@ -1,0 +1,149 @@
+<Window x:Class="WpfApplication3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PC Information 2.1" Height="580" Width="370" WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize">
+
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FAFAFA" Offset="0"/>
+            <GradientStop Color="#EAEAEA" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Window.Resources>
+        <!-- Base Font -->
+        <Style TargetType="{x:Type Control}">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="CharacterCasing" Value="Upper"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Background" Value="#FFF"/>
+            <Setter Property="BorderBrush" Value="#CCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- Modern Button -->
+        <Style x:Key="ModernButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#4A90E2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.2"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#357ABD"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#2C5E99"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Link Style -->
+        <Style x:Key="Link" TargetType="Button">
+            <Setter Property="Foreground" Value="#0066CC"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock TextDecorations="Underline"
+                                   Text="{TemplateBinding Content}"
+                                   Foreground="{TemplateBinding Foreground}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#004999"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- DataGrid Style -->
+        <Style TargetType="DataGrid">
+            <Setter Property="AlternatingRowBackground" Value="#F5F5F5"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180" />
+            <ColumnDefinition Width="180" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+
+        <Label Content="Computer Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="Operating System:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="OS Architecture:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="OS Version:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="OS Build:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="Last Reboot:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="Make:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="Model:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="Serial #:" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="Physical Memory:" Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>
+        <Label Content="C: Drive Free Space:" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold"/>   
+        <Button x:Name="Button_IPConfig" Content="IP Address:" HorizontalAlignment="Center" Grid.Row="11" Grid.Column="0" VerticalAlignment="Center" Margin="105,0,0,0" FontWeight="Bold" Style="{StaticResource Link}" />
+        <Label Content="Network Adapter(s):" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold"/>
+        
+        <TextBox x:Name="PCName" Grid.Column="1" Grid.Row="0" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="OS" Grid.Column="1" Grid.Row="1" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="OSArch" Grid.Column="1" Grid.Row="2" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="OSVersion" Grid.Column="1" Grid.Row="3" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="OSBuild" Grid.Column="1" Grid.Row="4" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="LastReboot" Grid.Column="1" Grid.Row="5" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="Make" Grid.Column="1" Grid.Row="6" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="ModelName" Grid.Column="1" Grid.Row="7" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="Serial" Grid.Column="1" Grid.Row="8" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="Memory" Grid.Column="1" Grid.Row="9" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="FreeSpace" Grid.Column="1" Grid.Row="10" IsReadOnly="True" Width="160"/>
+        <TextBox x:Name="IPAddress" Grid.Column="1" Grid.Row="11" IsReadOnly="True" Width="160"/>
+        <DataGrid x:Name="MACAddress" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="13" Grid.RowSpan="3" VerticalAlignment="Top" Width="330" MaxColumnWidth="220"/>
+        
+        <Button x:Name="Button_PrinterConfig" Content="Printer Cfg" Grid.Row="16" Grid.Column="0" Margin="10,7,0,0" Width="75" Height="35" Style="{StaticResource ModernButton}" />
+        <Button x:Name="Button_Copy" Content="Copy" Grid.Row="16" Grid.Column="0" Margin="95,7,0,0" Width="75" Height="35" Style="{StaticResource ModernButton}" />
+        <Button x:Name="Button_Refresh" Content="Refresh" Grid.Row="16" Grid.Column="1" Margin="0,7,0,0" Width="75" Height="35" Style="{StaticResource ModernButton}" />
+        <Button x:Name="Button_Exit" Content="Exit" Grid.Row="16" Grid.Column="1" Margin="65,7,0,0" Width="75" Height="35" Style="{StaticResource ModernButton}" />
+    </Grid>
+</Window>
