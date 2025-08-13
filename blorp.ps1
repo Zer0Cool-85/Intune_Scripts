@@ -1,9 +1,10 @@
-# Load WPF assemblies
-[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-[void][System.Reflection.Assembly]::LoadWithPartialName('presentationcore')
-[void][System.Reflection.Assembly]::LoadWithPartialName('windowsbase')
+#========================
+# PC Info Modern GUI v2.1
+#========================
 
-# Define Modern Windows 11 Style XAML
+#------------------------
+# XAML UI
+#------------------------
 $inputXML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -100,9 +101,9 @@ $inputXML = @"
 </Window>
 "@
 
-
-# Clean up XAML safely
-
+#------------------------
+# Load XAML in PowerShell
+#------------------------
 $inputXML = $inputXML -replace 'mc:Ignorable="d"','' -replace "x:N",'N'  -replace '^<Win.*', '<Window'
 
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
@@ -112,7 +113,7 @@ $reader = (New-Object System.Xml.XmlNodeReader $xaml)
 try { $Form = [Windows.Markup.XamlReader]::Load($reader) }
 catch { Write-Host "Unable to load Windows.Markup.XamlReader. Check syntax and .NET installation." }
 
-# Map all controls with a Name into PowerShell variables like $WPFPCName
+# Map XAML controls to PowerShell variables
 $XAML.SelectNodes("//*[@Name]") | ForEach-Object {
     Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name)
 }
@@ -120,9 +121,9 @@ $XAML.SelectNodes("//*[@Name]") | ForEach-Object {
 # Set Window Icon
 $Form.Icon = 'C:\Program Files\PCInfo\PCInfo.ico'
 
-#-------------------------
-# FUNCTIONS
-#-------------------------
+#------------------------
+# Functions
+#------------------------
 Function Copy-ToClipboard {
     $ClipBoard  = "PC Name:`t" + $WPFPCName.Text
     $ClipBoard += "`r`nOS:`t`t" + $WPFOS.Text
@@ -191,16 +192,20 @@ Function Get-PCInfo {
     $WPFMACAddress.ItemsSource = @($computerNetworkAdapters | Select-Object -Property Description, MacAddress)
 }
 
-#-------------------------
-# BUTTON EVENTS
-#-------------------------
+#------------------------
+# Button Events
+#------------------------
 $WPFButton_IPConfig.Add_Click({ ipconfig /all 2>&1 | Out-GridView -Title "IPConfig /All" })
 $WPFButton_Copy.Add_Click({ Copy-ToClipboard })
 $WPFButton_Refresh.Add_Click({ Get-PCInfo })
 $WPFButton_Exit.Add_Click({ $Form.Close() })
 
-# Load initial info
+#------------------------
+# Load initial PC info
+#------------------------
 Get-PCInfo
 
+#------------------------
 # Show the form
+#------------------------
 $Form.ShowDialog() | Out-Null
