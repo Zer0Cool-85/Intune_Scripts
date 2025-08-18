@@ -244,3 +244,28 @@ $Form.ShowDialog() | Out-Null
     </Grid>
 </Window>
 
+
+
+
+$uptime = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+$uptimeSpan = (Get-Date) - $uptime
+
+$uptimeParts = @()
+
+if ($uptimeSpan.Days -gt 0) {
+    $uptimeParts += "{0} day{1}" -f $uptimeSpan.Days, ($(if($uptimeSpan.Days -ne 1){"s"}))
+}
+if ($uptimeSpan.Hours -gt 0) {
+    $uptimeParts += "{0} hour{1}" -f $uptimeSpan.Hours, ($(if($uptimeSpan.Hours -ne 1){"s"}))
+}
+if ($uptimeSpan.Minutes -gt 0) {
+    $uptimeParts += "{0} min{1}" -f $uptimeSpan.Minutes, ($(if($uptimeSpan.Minutes -ne 1){"s"}))
+}
+
+# If all are 0, show seconds
+if ($uptimeParts.Count -eq 0) {
+    $uptimeParts += "{0} sec{1}" -f $uptimeSpan.Seconds, ($(if($uptimeSpan.Seconds -ne 1){"s"}))
+}
+
+$WPFUptime.Text = $uptimeParts -join ", "
+
