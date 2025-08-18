@@ -167,3 +167,80 @@ Get-PCInfo
 # Show Window
 # ==============================
 $Form.ShowDialog() | Out-Null
+
+
+
+
+
+
+
+
+
+
+<Window x:Class="PCInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PC Information"
+        Height="600"
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#f9f9f9">
+    
+    <Window.Resources>
+        <!-- Windows 11 Style Rounded Button -->
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#0078D7"/> <!-- Win11 accent blue -->
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.4"/>
+                            </Border.Effect>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#005A9E"/>
+                            </Trigger>
+                            <!-- Pressed -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#004377"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Info area -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <!-- Your two-column info labels/textboxes go here -->
+        </Grid>
+
+        <!-- Button bar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="Button_Copy" Content="Copy Info"/>
+            <Button x:Name="Button_Refresh" Content="Refresh"/>
+            <Button x:Name="Button_Exit" Content="Exit"/>
+        </StackPanel>
+    </Grid>
+</Window>
+
