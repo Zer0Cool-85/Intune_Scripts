@@ -98,3 +98,79 @@ show_dialog() {
 # Run Script
 # ================================
 show_dialog
+
+
+#!/bin/zsh
+
+# ================================
+# Collect System Info
+# ================================
+get_info() {
+  PC_NAME=$(scutil --get ComputerName)
+  OS_NAME=$(sw_vers -productName)
+  OS_VERSION=$(sw_vers -productVersion)
+  OS_BUILD=$(sw_vers -buildVersion)
+  ARCH=$(uname -m)
+  UPTIME=$(uptime | awk -F'( |,|:)+' '{print $6,$7",",$8,"hours,",$9,"mins"}')
+  LAST_REBOOT=$(who -b | awk '{print $3,$4}')
+  MAKE=$(sysctl -n hw.model)
+  MODEL=$(system_profiler SPHardwareDataType | awk -F": " '/Model Identifier/ {print $2}')
+  SERIAL=$(system_profiler SPHardwareDataType | awk -F": " '/Serial Number/ {print $2}')
+  MEMORY=$(system_profiler SPHardwareDataType | awk -F": " '/Memory/ {print $2}')
+  FREE_SPACE=$(df -h / | awk 'NR==2 {print $4}')
+  IP_ADDRESS=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null)
+
+  INFO="**Computer Name:** $PC_NAME  
+**OS:** $OS_NAME $OS_VERSION ($OS_BUILD)  
+**Architecture:** $ARCH  
+**Uptime:** $UPTIME  
+**Last Reboot:** $LAST_REBOOT  
+**Make:** $MAKE  
+**Model:** $MODEL  
+**Serial Number:** $SERIAL  
+**Memory:** $MEMORY  
+**Free Space:** $FREE_SPACE  
+**IP Address:** $IP_ADDRESS"
+}
+
+# ================================
+# Clipboard Function
+# ================================
+copy_info() {
+  echo "$INFO" | pbcopy
+  /usr/local/bin/dialog \
+    --title "✅ Copied" \
+    --message "All information has been copied to the clipboard." \
+    --button1text "OK"
+}
+
+# ================================
+# Main Dialog Function
+# ================================
+show_dialog() {
+  get_info
+
+  CHOICE=$(/usr/local/bin/dialog \
+    --title "💻 Mac Information" \
+    --icon "SF=desktopcomputer" \
+    --message "### System Information
+
+$INFO" \
+    --button1text "Copy Info" \
+    --button2text "Refresh" \
+    --button3text "Close")
+
+  EXIT_CODE=$?
+
+  case $EXIT_CODE in
+    0) copy_info ;;   # Copy Info
+    2) show_dialog ;; # Refresh
+    3) exit 0 ;;      # Close
+  esac
+}
+
+# ================================
+# Run Script
+# ================================
+show_dialog
+
