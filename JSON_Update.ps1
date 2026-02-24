@@ -41,17 +41,24 @@ function Convert-PolicyName {
 
     $updated = $Value
 
-    # Prefix swap: "Win - OIB -" -> "[Baseline]"
+    # 1) Prefix swap: "Win - OIB -" -> "[Baseline]"
     $updated = $updated -replace '^\s*Win\s*-\s*OIB\s*-\s*', '[Baseline] '
 
-    # Strip trailing version suffix like:
+    # 2) Remove the policy-type identifier immediately after the prefix
+    # Only when it matches: WUfB, ES, SC, TP
+    # Example: "[Baseline] ES - Attack Surface Reduction ..." -> "[Baseline] Attack Surface Reduction ..."
+    $updated = $updated -replace '^\s*\[Baseline\]\s+(WUfB|ES|SC|TP)\s*-\s*', '[Baseline] '
+
+    # 3) Strip trailing version suffix like:
     # " - v3.7" / " - v3" / " - v3.7.1" / " - v3.7-beta" / " - v3.7 (Preview)"
     $updated = $updated -replace '\s*-\s*v\d+(?:\.\d+)*(?:[A-Za-z0-9\-\s\(\)]*)?\s*$', ''
 
-    # Tidy whitespace
+    # 4) Tidy whitespace
     $updated = ($updated -replace '\s{2,}', ' ').Trim()
+
     return $updated
 }
+
 
 function Convert-ToSafeFileName {
     param([Parameter(Mandatory)][string]$Name)
