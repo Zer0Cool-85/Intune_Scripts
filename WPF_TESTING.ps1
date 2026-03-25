@@ -710,3 +710,405 @@ function Show-InfoPopup {
 
     return $window.Tag
 }
+
+
+
+function Show-MigrationProgress {
+    <#
+    .DESCRIPTION
+    Creates a WPF progress window in a separate STA runspace and allows the
+    status text to be updated dynamically. Optionally displays a fullscreen
+    dim overlay behind the popup while the migration is running.
+    #>
+
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]$StatusMessage = 'Starting Endpoint Migration...',
+
+        [Parameter(Mandatory = $false)]
+        [bool]$TopMost = $true,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]$WindowTitle = 'Migration Status Updates',
+
+        [Parameter(Mandatory = $false)]
+        [bool]$UseOverlay = $true,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]$OverlayColor = '#000000',
+
+        [Parameter(Mandatory = $false)]
+        [ValidateRange(0.0, 1.0)]
+        [double]$OverlayOpacity = 0.25
+    )
+
+    if ($envHost.Name -match 'PowerGUI') {
+        Write-Log -Level Warn -Message "$($envHost.Name) is not a supported host for WPF multi-threading. Progress dialog with message [$StatusMessage] will not be displayed."
+        return
+    }
+
+    $progressRunning = $false
+    try {
+        if ($script:ProgressSyncHash -and
+            $script:ProgressSyncHash.Window -and
+            $script:ProgressSyncHash.Window.Dispatcher -and
+            -not $script:ProgressSyncHash.Window.Dispatcher.HasShutdownStarted -and
+            -not $script:ProgressSyncHash.Window.Dispatcher.HasShutdownFinished) {
+            $progressRunning = $true
+        }
+    }
+    catch {
+        $progressRunning = $false
+    }
+
+    if (-not $progressRunning) {
+        $script:ProgressSyncHash = [hashtable]::Synchronized(@{})
+        $script:ProgressSyncHash.AllowClose = $false
+        $script:ProgressSyncHash.Error = $null
+        $script:ProgressSyncHash.Window = $null
+        $script:ProgressSyncHash.OverlayWindow = $null
+        $script:ProgressSyncHash.ProgressText = $null
+
+        $script:ProgressRunspace = [runspacefactory]::CreateRunspace()
+        $script:ProgressRunspace.ApartmentState = 'STA'
+        $script:ProgressRunspace.ThreadOptions = 'ReuseThread'
+        $script:ProgressRunspace.Open()
+
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('ProgressSyncHash', $script:ProgressSyncHash)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('WindowTitle', $WindowTitle)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('TopMost', $TopMost)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('ProgressStatusMessage', $StatusMessage)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('RsPSScriptRoot', $PSScriptRoot)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('UseOverlay', $UseOverlay)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('OverlayColor', $OverlayColor)
+        $script:ProgressRunspace.SessionStateProxy.SetVariable('OverlayOpacity', $OverlayOpacity)
+
+        $script:ProgressPowerShell = [powershell]::Create()
+        $null = $script:ProgressPowerShell.AddScript({
+            Add-Type -AssemblyName PresentationFramework
+            Add-Type -AssemblyName PresentationCore
+            Add-Type -AssemblyName WindowsBase
+
+            [string]$xamlProgressString = @'
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="Window"
+    Title="Migration Status"
+    Padding="0,0,0,0"
+    Margin="0,0,0,0"
+    WindowStartupLocation="Manual"
+    Top="0"
+    Left="0"
+    Topmost="True"
+    WindowStyle="None"
+    ResizeMode="NoResize"
+    ShowInTaskbar="True"
+    VerticalContentAlignment="Center"
+    HorizontalContentAlignment="Center"
+    SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <Storyboard x:Key="Storyboard1" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                           Storyboard.TargetName="ellipse"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
+                <SplineDoubleKeyFrame KeyTime="00:00:02" Value="360"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border BorderBrush="#2E1869" BorderThickness="10">
+        <Grid Background="#F0F0F0" MinWidth="450" MaxWidth="750" Width="600">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="50" MaxWidth="75" Width="75"/>
+                <ColumnDefinition MinWidth="350" Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="ProgressBanner"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Margin="0"
+                   Source=""/>
+
+            <TextBlock x:Name="ProgressText"
+                       Grid.Row="1"
+                       Grid.Column="1"
+                       Margin="-10,10,10,10"
+                       Text=""
+                       FontSize="22"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
+                       Padding="10,0,10,0"
+                       TextWrapping="Wrap"/>
+
+            <Ellipse x:Name="ellipse"
+                     Grid.Row="1"
+                     Grid.Column="0"
+                     Margin="0,0,0,0"
+                     StrokeThickness="5"
+                     RenderTransformOrigin="0.5,0.5"
+                     Height="45"
+                     Width="45"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center">
+                <Ellipse.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                    </TransformGroup>
+                </Ellipse.RenderTransform>
+                <Ellipse.Stroke>
+                    <LinearGradientBrush EndPoint="0.445,0.997" StartPoint="0.555,0.003">
+                        <GradientStop Color="White" Offset="0"/>
+                        <GradientStop Color="#0078d4" Offset="1"/>
+                    </LinearGradientBrush>
+                </Ellipse.Stroke>
+            </Ellipse>
+        </Grid>
+    </Border>
+</Window>
+'@
+
+            [string]$xamlOverlayString = @'
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    WindowStyle="None"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    ShowActivated="False"
+    Topmost="True"
+    AllowsTransparency="True"
+    WindowStartupLocation="Manual"
+    Left="0"
+    Top="0"
+    Background="#000000"
+    Opacity="0.25">
+</Window>
+'@
+
+            try {
+                [xml]$xamlProgress = $xamlProgressString
+                $progressReader = New-Object System.Xml.XmlNodeReader $xamlProgress
+                $ProgressSyncHash.Window = [Windows.Markup.XamlReader]::Load($progressReader)
+
+                $ProgressSyncHash.Window.TopMost = $TopMost
+                $ProgressSyncHash.Window.Title = $WindowTitle
+                $ProgressSyncHash.Window.Icon = "$RsPSScriptRoot\icon.ico"
+
+                $ProgressBanner = $ProgressSyncHash.Window.FindName('ProgressBanner')
+                $ProgressText   = $ProgressSyncHash.Window.FindName('ProgressText')
+
+                $ProgressBanner.Source = "$RsPSScriptRoot\banner.png"
+                $ProgressText.Text = $ProgressStatusMessage
+
+                $ProgressSyncHash.ProgressText = $ProgressText
+
+                if ($UseOverlay) {
+                    [xml]$xamlOverlay = $xamlOverlayString
+                    $overlayReader = New-Object System.Xml.XmlNodeReader $xamlOverlay
+                    $ProgressSyncHash.OverlayWindow = [Windows.Markup.XamlReader]::Load($overlayReader)
+
+                    $brushConverter = New-Object System.Windows.Media.BrushConverter
+                    $ProgressSyncHash.OverlayWindow.Background = $brushConverter.ConvertFromString($OverlayColor)
+                    $ProgressSyncHash.OverlayWindow.Opacity = [double]$OverlayOpacity
+                    $ProgressSyncHash.OverlayWindow.Left = [double][System.Windows.SystemParameters]::VirtualScreenLeft
+                    $ProgressSyncHash.OverlayWindow.Top = [double][System.Windows.SystemParameters]::VirtualScreenTop
+                    $ProgressSyncHash.OverlayWindow.Width = [double][System.Windows.SystemParameters]::VirtualScreenWidth
+                    $ProgressSyncHash.OverlayWindow.Height = [double][System.Windows.SystemParameters]::VirtualScreenHeight
+                }
+
+                $ProgressSyncHash.Window.Add_Loaded({
+                    $screenWidth = [System.Windows.SystemParameters]::WorkArea.Width
+                    $screenHeight = [System.Windows.SystemParameters]::WorkArea.Height
+
+                    $ProgressSyncHash.Window.Left = [double](($screenWidth - $ProgressSyncHash.Window.ActualWidth) / 2)
+                    $ProgressSyncHash.Window.Top = [double](($screenHeight - $ProgressSyncHash.Window.ActualHeight) / 50)
+
+                    $ProgressSyncHash.Window.Activate()
+                })
+
+                $ProgressSyncHash.Window.Add_Closing({
+                    if (-not $ProgressSyncHash.AllowClose) {
+                        $_.Cancel = $true
+                    }
+                })
+
+                $ProgressSyncHash.Window.Add_Closed({
+                    try {
+                        if ($ProgressSyncHash.OverlayWindow) {
+                            $ProgressSyncHash.OverlayWindow.Close()
+                        }
+                    }
+                    catch { }
+                })
+
+                $ProgressSyncHash.Window.Add_MouseLeftButtonDown({
+                    $ProgressSyncHash.Window.DragMove()
+                })
+
+                if ($ProgressSyncHash.OverlayWindow) {
+                    $null = $ProgressSyncHash.OverlayWindow.Show()
+                }
+
+                $null = $ProgressSyncHash.Window.ShowDialog()
+            }
+            catch {
+                $ProgressSyncHash.Error = $_
+            }
+            finally {
+                try {
+                    if ($ProgressSyncHash.OverlayWindow) {
+                        $ProgressSyncHash.OverlayWindow.Close()
+                    }
+                }
+                catch { }
+            }
+        })
+
+        $script:ProgressPowerShell.Runspace = $script:ProgressRunspace
+
+        Write-Log -Level Info -Message "Creating the progress dialog in a separate thread with message: [$StatusMessage]."
+        $script:ProgressAsyncResult = $script:ProgressPowerShell.BeginInvoke()
+
+        $timeout = [datetime]::Now.AddSeconds(5)
+        do {
+            Start-Sleep -Milliseconds 150
+            $windowReady = $false
+            try {
+                if ($script:ProgressSyncHash.Window -and $script:ProgressSyncHash.ProgressText) {
+                    $windowReady = $true
+                }
+            }
+            catch {
+                $windowReady = $false
+            }
+        } until ($windowReady -or [datetime]::Now -ge $timeout)
+
+        if ($script:ProgressSyncHash.Error) {
+            Write-Log -Level Error -Message "Failure while displaying progress dialog: $($script:ProgressSyncHash.Error)"
+        }
+    }
+    else {
+        try {
+            $script:ProgressSyncHash.Window.Dispatcher.Invoke(
+                [System.Action]{
+                    $script:ProgressSyncHash.ProgressText.Text = $StatusMessage
+
+                    $screenWidth = [System.Windows.SystemParameters]::WorkArea.Width
+                    $screenHeight = [System.Windows.SystemParameters]::WorkArea.Height
+
+                    $script:ProgressSyncHash.Window.Left = [double](($screenWidth - $script:ProgressSyncHash.Window.ActualWidth) / 2)
+                    $script:ProgressSyncHash.Window.Top = [double](($screenHeight - $script:ProgressSyncHash.Window.ActualHeight) / 50)
+                },
+                [Windows.Threading.DispatcherPriority]::Send
+            )
+
+            Write-Log -Level Info -Message "Updated the progress message: [$StatusMessage]."
+        }
+        catch {
+            Write-Log -Level Error -Message "Unable to update the progress message: $_"
+        }
+    }
+}
+
+function Close-MigrationProgress {
+    <#
+    .DESCRIPTION
+    Closes the migration progress window, closes the overlay if present,
+    and cleans up the runspace/hash.
+    #>
+
+    try {
+        if ($script:ProgressSyncHash -and
+            $script:ProgressSyncHash.Window -and
+            $script:ProgressSyncHash.Window.Dispatcher -and
+            -not $script:ProgressSyncHash.Window.Dispatcher.HasShutdownStarted -and
+            -not $script:ProgressSyncHash.Window.Dispatcher.HasShutdownFinished) {
+
+            $script:ProgressSyncHash.Window.Dispatcher.Invoke(
+                [System.Action]{
+                    try {
+                        $script:ProgressSyncHash.AllowClose = $true
+                    }
+                    catch { }
+
+                    try {
+                        if ($script:ProgressSyncHash.OverlayWindow) {
+                            $script:ProgressSyncHash.OverlayWindow.Close()
+                        }
+                    }
+                    catch { }
+
+                    try {
+                        $script:ProgressSyncHash.Window.Close()
+                    }
+                    catch { }
+
+                    try {
+                        [System.Windows.Threading.Dispatcher]::CurrentDispatcher.InvokeShutdown()
+                    }
+                    catch { }
+                },
+                [Windows.Threading.DispatcherPriority]::Send
+            )
+        }
+    }
+    catch { }
+
+    try {
+        if ($script:ProgressAsyncResult -and $script:ProgressPowerShell) {
+            $script:ProgressPowerShell.EndInvoke($script:ProgressAsyncResult)
+        }
+    }
+    catch { }
+
+    try {
+        if ($script:ProgressPowerShell) {
+            $script:ProgressPowerShell.Dispose()
+        }
+    }
+    catch { }
+
+    try {
+        if ($script:ProgressRunspace -and
+            $script:ProgressRunspace.RunspaceStateInfo.State -eq [System.Management.Automation.Runspaces.RunspaceState]::Opened) {
+            $script:ProgressRunspace.Close()
+        }
+    }
+    catch { }
+
+    try {
+        if ($script:ProgressRunspace) {
+            $script:ProgressRunspace.Dispose()
+        }
+    }
+    catch { }
+
+    try {
+        if ($script:ProgressSyncHash) {
+            $script:ProgressSyncHash.Clear()
+        }
+    }
+    catch { }
+
+    $script:ProgressAsyncResult = $null
+    $script:ProgressPowerShell  = $null
+    $script:ProgressRunspace    = $null
+    $script:ProgressSyncHash    = $null
+}
