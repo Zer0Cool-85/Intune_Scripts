@@ -1,4 +1,85 @@
-function Get-PopupDeferralRecord {
+function Save-PopupDeferralState {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path,
+
+        [Parameter(Mandatory)]
+        [string]$PopupName,
+
+        [Parameter(Mandatory)]
+        [pscustomobject]$PopupResult
+    )
+
+    $folder = Split-Path -Path $Path -Parent
+    if (-not (Test-Path $folder)) {
+        [void](New-Item -Path $folder -ItemType Directory -Force)
+    }
+
+    $state = @{}
+
+    if (Test-Path $Path) {
+        try {
+            $raw = Get-Content -Path $Path -Raw -ErrorAction Stop
+            if (-not [string]::IsNullOrWhiteSpace($raw)) {
+                $jsonObject = $raw | ConvertFrom-Json -ErrorAction Stop
+
+                foreach ($property in $jsonObject.PSObject.Properties) {
+                    $state[$property.Name] = $property.Value
+                }
+            }
+        }
+        catch {
+            $state = @{}
+        }
+    }
+
+    $state[$PopupName] = [ordered]@{
+        HasDeferred = $true
+        DeferredAt  = $PopupResult.Timestamp
+        DeferHours  = $PopupResult.DeferHours
+        DeferUntil  = $PopupResult.DeferUntil
+    }
+
+    $state | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
+}
+
+
+
+function Get-PopupDeferralState {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path
+    )
+
+    if (-not (Test-Path $Path)) {
+        return @{}
+    }
+
+    try {
+        $raw = Get-Content -Path $Path -Raw -ErrorAction Stop
+        if ([string]::IsNullOrWhiteSpace($raw)) {
+            return @{}
+        }
+
+        $jsonObject = $raw | ConvertFrom-Json -ErrorAction Stop
+        $state = @{}
+
+        foreach ($property in $jsonObject.PSObject.Properties) {
+            $state[$property.Name] = $property.Value
+        }
+
+        return $state
+    }
+    catch {
+        return @{}
+    }
+}
+
+
+
+function Remove-PopupDeferralState {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -9,209 +90,54 @@ function Get-PopupDeferralRecord {
     )
 
     if (-not (Test-Path $Path)) {
-        return $null
+        return
     }
 
-    try {
-        $raw = Get-Content -Path $Path -Raw -ErrorAction Stop
-        if ([string]::IsNullOrWhiteSpace($raw)) {
-            return $null
-        }
+    $state = Get-PopupDeferralState -Path $Path
 
-        $json = $raw | ConvertFrom-Json -ErrorAction Stop
-    }
-    catch {
-        return $null
-    }
-
-    if ($json.PSObject.Properties.Name -notcontains $PopupName) {
-        return $null
-    }
-
-    $record = $json.$PopupName
-
-    [pscustomobject]@{
-        HasDeferred = [bool]$record.HasDeferred
-        DeferredAt  = if ($record.DeferredAt)  { [datetime]$record.DeferredAt }  else { $null }
-        DeferHours  = if ($record.DeferHours)  { [int]$record.DeferHours }       else { $null }
-        DeferUntil  = if ($record.DeferUntil)  { [datetime]$record.DeferUntil }  else { $null }
+    if ($state.ContainsKey($PopupName)) {
+        $state.Remove($PopupName)
+        $state | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
     }
 }
 
 
 
-function Get-InteractiveShellInfo {
-    [CmdletBinding()]
-    param()
-
-    $explorer = Get-Process -Name explorer -IncludeUserName -ErrorAction SilentlyContinue |
-        Where-Object {
-            $_.SessionId -ne 0 -and
-            $_.UserName -and
-            $_.UserName -notmatch '^(NT AUTHORITY|Window Manager|Font Driver Host)'
-        } |
-        Sort-Object StartTime -Descending |
-        Select-Object -First 1
-
-    if (-not $explorer) {
-        return $null
-    }
-
-    [pscustomobject]@{
-        UserName  = $explorer.UserName
-        SessionId = $explorer.SessionId
-        ProcessId = $explorer.Id
-    }
-}
-
-
-
-function Test-SessionProbablyLocked {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [int]$SessionId
-    )
-
-    $logonUi = Get-CimInstance Win32_Process -Filter "Name='LogonUI.exe'" -ErrorAction SilentlyContinue
-
-    if (-not $logonUi) {
-        return $false
-    }
-
-    return [bool]($logonUi | Where-Object { $_.SessionId -eq $SessionId })
-}
-
-
-
-function Test-MigrationPromptGate {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$PopupName,
-
-        [Parameter(Mandatory)]
-        [string]$StatePath,
-
-        [Parameter()]
-        [string]$MigrationCompleteMarkerPath
-    )
-
-    $now = Get-Date
-
-    # 1. Migration already complete?
-    if ($MigrationCompleteMarkerPath -and (Test-Path $MigrationCompleteMarkerPath)) {
-        return [pscustomobject]@{
-            ShouldPrompt = $false
-            Reason       = 'Migration already completed.'
-            DisableDefer = $true
-            SessionId    = $null
-            UserName     = $null
-            Deferral     = $null
-        }
-    }
-
-    # 2. Read deferral state
-    $deferral = Get-PopupDeferralRecord -Path $StatePath -PopupName $PopupName
-    $disableDefer = $false
-
-    if ($deferral -and $deferral.HasDeferred) {
-        $disableDefer = $true
-    }
-
-    if ($deferral -and $deferral.DeferUntil -and $now -lt $deferral.DeferUntil) {
-        return [pscustomobject]@{
-            ShouldPrompt = $false
-            Reason       = "Still deferred until $($deferral.DeferUntil)."
-            DisableDefer = $disableDefer
-            SessionId    = $null
-            UserName     = $null
-            Deferral     = $deferral
-        }
-    }
-
-    # 3. Require an interactive user shell
-    $shell = Get-InteractiveShellInfo
-    if (-not $shell) {
-        return [pscustomobject]@{
-            ShouldPrompt = $false
-            Reason       = 'No interactive user shell found.'
-            DisableDefer = $disableDefer
-            SessionId    = $null
-            UserName     = $null
-            Deferral     = $deferral
-        }
-    }
-
-    # 4. Best-effort lock screen detection
-    if (Test-SessionProbablyLocked -SessionId $shell.SessionId) {
-        return [pscustomobject]@{
-            ShouldPrompt = $false
-            Reason       = "User session $($shell.SessionId) appears to be locked or at the sign-in screen."
-            DisableDefer = $disableDefer
-            SessionId    = $shell.SessionId
-            UserName     = $shell.UserName
-            Deferral     = $deferral
-        }
-    }
-
-    # 5. Good to show prompt
-    return [pscustomobject]@{
-        ShouldPrompt = $true
-        Reason       = 'Interactive unlocked user session detected.'
-        DisableDefer = $disableDefer
-        SessionId    = $shell.SessionId
-        UserName     = $shell.UserName
-        Deferral     = $deferral
-    }
-}
-
-
-
-$popupName   = 'EndpointMigration'
-$statePath   = "$env:ProgramData\Company\PopupDeferrals.json"
-$doneMarker  = "$env:ProgramData\Company\MigrationComplete.tag"
-
-$gate = Test-MigrationPromptGate `
-    -PopupName $popupName `
-    -StatePath $statePath `
-    -MigrationCompleteMarkerPath $doneMarker
-
-Write-Host "[MigrationGate] $($gate.Reason)"
-
-if (-not $gate.ShouldPrompt) {
-    return
-}
-
-
+$popupName = 'EndpointMigration'
+$statePath = "$env:ProgramData\Company\PopupDeferrals.json"
 
 $result = Show-InfoPopup `
     -Title 'Endpoint Migration' `
     -HeaderText 'Starting migration process' `
     -MessageText 'Please close all open applications and save your work before continuing.' `
-    -DialogMode Defer `
-    -DisableDefer:$gate.DisableDefer
+    -DialogMode Defer
 
 
-switch ($result.Action) {
-    'Primary' {
-        Write-Host 'User chose Continue'
-        # Start migration
-    }
 
-    'Defer' {
-        Save-PopupDeferralState -Path $statePath -PopupName $popupName -PopupResult $result
-        Write-Host "User deferred until $($result.DeferUntil)"
+if ($result.Action -eq 'Defer') {
+    Save-PopupDeferralState -Path $statePath -PopupName $popupName -PopupResult $result
+}
+
+
+
+if ($result.Action -eq 'Primary') {
+    Remove-PopupDeferralState -Path $statePath -PopupName $popupName
+}
+
+
+
+$state = Get-PopupDeferralState -Path $statePath
+
+if ($state.ContainsKey($popupName)) {
+    $existing = $state[$popupName]
+
+    if ($existing.DeferUntil -and ((Get-Date) -lt [datetime]$existing.DeferUntil)) {
+        Write-Host "Still deferred until $($existing.DeferUntil)"
         return
     }
 
-    'Secondary' {
-        Write-Host 'User cancelled'
-        return
-    }
-
-    'Closed' {
-        Write-Host 'User closed the popup'
-        return
-    }
+    $disableDefer = $true
+}
+else {
+    $disableDefer = $false
 }
