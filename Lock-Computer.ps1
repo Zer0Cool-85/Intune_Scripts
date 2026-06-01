@@ -524,3 +524,6 @@ catch {
 }
 
 exit 1
+
+
+powershell.exe -ExecutionPolicy Bypass -NoProfile -File .\Invoke-TerminationLockdown.ps1 -RestartAfterLockdown $true -RestartDelaySeconds 60
