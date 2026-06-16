@@ -588,3 +588,6 @@ catch {
     Write-Log "Script stack trace: $($_.ScriptStackTrace)" 'ERROR'
     exit 1
 }
+
+
+%SystemRoot%\Sysnative\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File ".\Set-AWSVPNProfiles.ps1"
