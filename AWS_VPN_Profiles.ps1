@@ -15,6 +15,126 @@ function Stop-AwsVpnClient {
     Get-Process -Name "AWSVPNClient" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 }
 
+function Invoke-AWSVPNClientFirstLaunch {
+    param (
+        [int]$WaitForAppDataSeconds = 20,
+        [int]$PostLaunchDelaySeconds = 5
+    )
+
+    $AwsVpnExe = 'C:\Program Files\Amazon\AWS VPN Client\AWSVPNClient.exe'
+    $AwsVpnAppDataRoot = Join-Path $env:APPDATA 'AWSVPNClient'
+
+    Write-Log 'Starting AWS VPN Client first-launch initialization check.'
+    Write-Log "Expected AWS VPN Client EXE path: $AwsVpnExe"
+    Write-Log "Expected AWS VPN Client AppData path: $AwsVpnAppDataRoot"
+
+    if (Test-Path $AwsVpnAppDataRoot) {
+        Write-Log 'AWS VPN Client AppData directory already exists. First-launch step is not required.'
+        return $true
+    }
+
+    if (-not (Test-Path $AwsVpnExe)) {
+        Write-Log "AWS VPN Client executable was not found at [$AwsVpnExe]. Skipping first-launch step." 'WARN'
+        return $false
+    }
+
+    try {
+        # Track any AWS VPN Client processes that were already running so we do not close a user's existing session.
+        $ExistingProcessIds = @(
+            Get-Process -Name 'AWSVPNClient' -ErrorAction SilentlyContinue |
+                Select-Object -ExpandProperty Id
+        )
+
+        Write-Log "Existing AWSVPNClient process IDs before launch: $($ExistingProcessIds -join ', ')"
+
+        Write-Log 'Launching AWS VPN Client.'
+        $StartedProcess = Start-Process -FilePath $AwsVpnExe -PassThru -WindowStyle Minimized
+
+        Write-Log "Started AWS VPN Client process ID: $($StartedProcess.Id)"
+
+        $Deadline = (Get-Date).AddSeconds($WaitForAppDataSeconds)
+
+        do {
+            if (Test-Path $AwsVpnAppDataRoot) {
+                Write-Log "AWS VPN Client AppData directory was created: $AwsVpnAppDataRoot"
+                break
+            }
+
+            Start-Sleep -Seconds 1
+        }
+        while ((Get-Date) -lt $Deadline)
+
+        if (-not (Test-Path $AwsVpnAppDataRoot)) {
+            Write-Log "AWS VPN Client AppData directory was not created within [$WaitForAppDataSeconds] seconds." 'WARN'
+        }
+
+        Write-Log "Waiting [$PostLaunchDelaySeconds] additional second(s) before closing AWS VPN Client."
+        Start-Sleep -Seconds $PostLaunchDelaySeconds
+
+        # Close only AWSVPNClient processes that appeared after this script launched the app.
+        $NewAwsVpnProcesses = @(
+            Get-Process -Name 'AWSVPNClient' -ErrorAction SilentlyContinue |
+                Where-Object { $_.Id -notin $ExistingProcessIds }
+        )
+
+        foreach ($Process in $NewAwsVpnProcesses) {
+            Write-Log "Attempting graceful close of AWSVPNClient process ID [$($Process.Id)]."
+
+            try {
+                if ($Process.MainWindowHandle -ne 0) {
+                    $null = $Process.CloseMainWindow()
+                    Start-Sleep -Seconds 3
+                    $Process.Refresh()
+                }
+
+                if (-not $Process.HasExited) {
+                    Write-Log "AWSVPNClient process ID [$($Process.Id)] did not close gracefully. Stopping process." 'WARN'
+                    Stop-Process -Id $Process.Id -Force -ErrorAction Stop
+                }
+                else {
+                    Write-Log "AWSVPNClient process ID [$($Process.Id)] closed gracefully."
+                }
+            }
+            catch {
+                Write-Log "Failed while closing AWSVPNClient process ID [$($Process.Id)]. Error: $($_.Exception.Message)" 'WARN'
+            }
+        }
+
+        if ($NewAwsVpnProcesses.Count -eq 0) {
+            Write-Log 'No new AWSVPNClient process was found to close. The app may have exited on its own or reused an existing process.'
+        }
+
+        if (Test-Path $AwsVpnAppDataRoot) {
+            Write-Log 'AWS VPN Client first-launch initialization completed successfully.'
+            return $true
+        }
+        else {
+            Write-Log 'AWS VPN Client first-launch initialization completed, but AppData directory still does not exist.' 'WARN'
+            return $false
+        }
+    }
+    catch {
+        Write-Log "AWS VPN Client first-launch initialization failed. Error: $($_.Exception.Message)" 'ERROR'
+        Write-Log "Script stack trace: $($_.ScriptStackTrace)" 'ERROR'
+        return $false
+    }
+}
+
+# Trigger first-run initialization if AWSVPNClient AppData does not already exist.
+$FirstLaunchResult = Invoke-AWSVPNClientFirstLaunch `
+    -WaitForAppDataSeconds 20 `
+    -PostLaunchDelaySeconds 5
+
+Write-Log "AWS VPN Client first-launch result: $FirstLaunchResult"
+
+# Continue either way because the script can create the folders itself.
+$AwsRoot = Join-Path $env:APPDATA 'AWSVPNClient'
+$OpenVpnConfigRoot = Join-Path $AwsRoot 'OpenVpnConfigs'
+$ConnectionProfilesPath = Join-Path $AwsRoot 'ConnectionProfiles'
+
+New-Item -Path $AwsRoot -ItemType Directory -Force | Out-Null
+New-Item -Path $OpenVpnConfigRoot -ItemType Directory -Force | Out-Null
+
 # AWS VPN Client profile configuration
 # Intended to run in USER context from Intune
 
