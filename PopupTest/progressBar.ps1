@@ -2,27 +2,69 @@
 
 <#
 .SYNOPSIS
-    Displays an indeterminate authentication progress popup.
+    Reusable asynchronous WPF authentication progress popup.
 
 .DESCRIPTION
-    Standalone WPF example showing:
-      - Header: Authenticating
-      - Body: Please complete authentication
-      - Indeterminate progress bar
-      - Progress text: Waiting for auth
-      - A single Cancel button
+    Defines Show-AuthProgress and Close-AuthProgress for use inside a larger
+    Windows PowerShell script.
 
-    The script writes "Cancel" to the pipeline when the popup is dismissed.
+    The popup runs on its own STA runspace, so its indeterminate progress bar
+    continues animating and its Cancel button remains responsive even while the
+    calling script is inside a timeout loop or waiting on a background job.
 
-.EXAMPLE
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\AuthProgressPopup.ps1
+    Show-AuthProgress returns a controller object with these members:
+
+      $authProg.Cancelled
+      $authProg.IsOpen
+      $authProg.CloseReason
+      $authProg.SetText('Verifying authentication...')
+      $authProg.Close('Complete')
+
+    Dot-source this file to load the functions:
+
+      . .\AuthProgressPopup.ps1
+
+    Or paste the function definitions into the function section of the main
+    script. This file does not display anything merely by being dot-sourced.
 #>
 
-Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName PresentationCore
-Add-Type -AssemblyName WindowsBase
+function Show-AuthProgress {
+    [CmdletBinding()]
+    param(
+        [string]$Title = 'Authenticating',
 
-[xml]$Xaml = @'
+        [string]$Message = 'Please complete authentication',
+
+        [string]$ProgressText = 'Waiting for auth',
+
+        [ValidateRange(1000, 30000)]
+        [int]$ReadyTimeoutMilliseconds = 5000
+    )
+
+    $SharedState = [hashtable]::Synchronized(@{
+        Ready           = $false
+        Closed          = $false
+        CloseRequested  = $false
+        CancelRequested = $false
+        CloseReason     = 'Pending'
+        ProgressText    = $ProgressText
+        StartupError    = $null
+    })
+
+    $PopupScript = {
+        param(
+            [hashtable]$State,
+            [string]$WindowTitle,
+            [string]$BodyMessage,
+            [string]$InitialProgressText
+        )
+
+        try {
+            Add-Type -AssemblyName PresentationFramework
+            Add-Type -AssemblyName PresentationCore
+            Add-Type -AssemblyName WindowsBase
+
+            [xml]$Xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Authenticating"
@@ -113,13 +155,15 @@ Add-Type -AssemblyName WindowsBase
                 <Grid x:Name="DragArea"
                       Grid.Row="0"
                       Background="Transparent">
-                    <TextBlock Text="Authenticating"
+                    <TextBlock x:Name="HeaderText"
+                               Text="Authenticating"
                                Foreground="#202124"
                                FontSize="25"
                                FontWeight="SemiBold"/>
                 </Grid>
 
-                <TextBlock Grid.Row="1"
+                <TextBlock x:Name="BodyText"
+                           Grid.Row="1"
                            Margin="0,12,0,0"
                            Text="Please complete authentication"
                            Foreground="#5F6368"
@@ -156,42 +200,264 @@ Add-Type -AssemblyName WindowsBase
 </Window>
 '@
 
-$XmlReader = [System.Xml.XmlNodeReader]::new($Xaml)
+            $XmlReader = [System.Xml.XmlNodeReader]::new($Xaml)
 
-try {
-    $Window = [System.Windows.Markup.XamlReader]::Load($XmlReader)
-}
-finally {
-    $XmlReader.Close()
-}
+            try {
+                $AuthWindow =
+                    [System.Windows.Markup.XamlReader]::Load($XmlReader)
+            }
+            finally {
+                $XmlReader.Close()
+            }
 
-$CancelButton = $Window.FindName('CancelButton')
-$DragArea     = $Window.FindName('DragArea')
+            $HeaderText   = $AuthWindow.FindName('HeaderText')
+            $BodyText     = $AuthWindow.FindName('BodyText')
+            $ProgressText = $AuthWindow.FindName('ProgressText')
+            $CancelButton = $AuthWindow.FindName('CancelButton')
+            $DragArea     = $AuthWindow.FindName('DragArea')
 
-# Tag serves as a simple return value for the popup.
-$Window.Tag = 'Cancel'
+            $AuthWindow.Title = $WindowTitle
+            $HeaderText.Text = $WindowTitle
+            $BodyText.Text = $BodyMessage
+            $ProgressText.Text = $InitialProgressText
 
-$CancelButton.Add_Click({
-    $Window.Tag = 'Cancel'
-    $Window.Close()
-})
+            $State.ProgressText = $InitialProgressText
 
-$Window.Add_KeyDown({
-    param($Sender, $EventArgs)
+            $CloseTimer =
+                [System.Windows.Threading.DispatcherTimer]::new()
 
-    if ($EventArgs.Key -eq [System.Windows.Input.Key]::Escape) {
-        $Sender.Tag = 'Cancel'
-        $Sender.Close()
+            $CloseTimer.Interval =
+                [timespan]::FromMilliseconds(100)
+
+            $CloseTimer.Add_Tick({
+                $RequestedText = [string]$State.ProgressText
+
+                if ($ProgressText.Text -ne $RequestedText) {
+                    $ProgressText.Text = $RequestedText
+                }
+
+                if ($State.CloseRequested) {
+                    $CloseTimer.Stop()
+                    $AuthWindow.Close()
+                }
+            })
+
+            $CancelButton.Add_Click({
+                $State.CancelRequested = $true
+                $State.CloseReason = 'Cancel'
+                $State.CloseRequested = $true
+                $AuthWindow.Close()
+            })
+
+            $AuthWindow.Add_Closing({
+                param($Sender, $EventArgs)
+
+                if (-not $State.CloseRequested) {
+                    $State.CancelRequested = $true
+                    $State.CloseReason = 'Cancel'
+                    $State.CloseRequested = $true
+                }
+            })
+
+            $DragArea.Add_MouseLeftButtonDown({
+                param($Sender, $EventArgs)
+
+                if (
+                    $EventArgs.LeftButton -eq
+                    [System.Windows.Input.MouseButtonState]::Pressed
+                ) {
+                    $AuthWindow.DragMove()
+                }
+            })
+
+            $CloseTimer.Start()
+            $State.Ready = $true
+
+            [void]$AuthWindow.ShowDialog()
+        }
+        catch {
+            $State.StartupError = $_.Exception.Message
+            throw
+        }
+        finally {
+            if ($null -ne $CloseTimer) {
+                $CloseTimer.Stop()
+            }
+
+            $State.Ready = $false
+            $State.Closed = $true
+        }
     }
-})
 
-$DragArea.Add_MouseLeftButtonDown({
-    if ($_.LeftButton -eq [System.Windows.Input.MouseButtonState]::Pressed) {
-        $Window.DragMove()
+    $PopupRunspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
+
+    $PopupRunspace.ApartmentState =
+        [System.Threading.ApartmentState]::STA
+
+    $PopupRunspace.ThreadOptions =
+        [System.Management.Automation.Runspaces.PSThreadOptions]::ReuseThread
+
+    $PopupRunspace.Open()
+
+    $PopupPowerShell = [powershell]::Create()
+    $PopupPowerShell.Runspace = $PopupRunspace
+
+    [void]$PopupPowerShell.AddScript($PopupScript.ToString())
+    [void]$PopupPowerShell.AddArgument($SharedState)
+    [void]$PopupPowerShell.AddArgument($Title)
+    [void]$PopupPowerShell.AddArgument($Message)
+    [void]$PopupPowerShell.AddArgument($ProgressText)
+
+    $AsyncResult = $PopupPowerShell.BeginInvoke()
+
+    $ReadyWatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+    while (
+        -not $SharedState.Ready -and
+        -not $AsyncResult.IsCompleted -and
+        $ReadyWatch.ElapsedMilliseconds -lt $ReadyTimeoutMilliseconds
+    ) {
+        Start-Sleep -Milliseconds 25
     }
-})
 
-$CancelButton.Focus() | Out-Null
-[void]$Window.ShowDialog()
+    $ReadyWatch.Stop()
 
-Write-Output ([string]$Window.Tag)
+    if (-not $SharedState.Ready) {
+        $ErrorText = [string]$SharedState.StartupError
+
+        if ([string]::IsNullOrWhiteSpace($ErrorText)) {
+            $ErrorText =
+                ($PopupPowerShell.Streams.Error | Out-String).Trim()
+        }
+
+        if ([string]::IsNullOrWhiteSpace($ErrorText)) {
+            $ErrorText =
+                'The authentication progress popup did not become ready.'
+        }
+
+        $SharedState.CloseRequested = $true
+
+        if (-not $AsyncResult.AsyncWaitHandle.WaitOne(1000)) {
+            $PopupPowerShell.Stop()
+        }
+        else {
+            try {
+                [void]$PopupPowerShell.EndInvoke($AsyncResult)
+            }
+            catch {
+                # The startup error is reported below.
+            }
+        }
+
+        $PopupPowerShell.Dispose()
+        $PopupRunspace.Dispose()
+
+        throw $ErrorText
+    }
+
+    $Controller = [pscustomobject][ordered]@{
+        PSTypeName  = 'AuthProgressPopup.Controller'
+        State       = $SharedState
+        PowerShell  = $PopupPowerShell
+        Runspace    = $PopupRunspace
+        AsyncResult = $AsyncResult
+        Disposed    = $false
+    }
+
+    $Controller | Add-Member `
+        -MemberType ScriptProperty `
+        -Name Cancelled `
+        -Value {
+            return [bool]$this.State.CancelRequested
+        }
+
+    $Controller | Add-Member `
+        -MemberType ScriptProperty `
+        -Name IsOpen `
+        -Value {
+            return (
+                -not $this.Disposed -and
+                -not [bool]$this.State.Closed
+            )
+        }
+
+    $Controller | Add-Member `
+        -MemberType ScriptProperty `
+        -Name CloseReason `
+        -Value {
+            return [string]$this.State.CloseReason
+        }
+
+    $Controller | Add-Member `
+        -MemberType ScriptMethod `
+        -Name SetText `
+        -Value {
+            param([string]$Text)
+
+            if (-not $this.Disposed) {
+                $this.State.ProgressText = $Text
+            }
+        }
+
+    $Controller | Add-Member `
+        -MemberType ScriptMethod `
+        -Name Close `
+        -Value {
+            param(
+                [string]$Reason = 'Complete',
+                [int]$WaitMilliseconds = 3000
+            )
+
+            if ($this.Disposed) {
+                return
+            }
+
+            $this.State.CloseReason = $Reason
+            $this.State.CloseRequested = $true
+
+            if (-not $this.AsyncResult.IsCompleted) {
+                [void]$this.AsyncResult.AsyncWaitHandle.WaitOne(
+                    $WaitMilliseconds
+                )
+            }
+
+            if ($this.AsyncResult.IsCompleted) {
+                try {
+                    [void]$this.PowerShell.EndInvoke(
+                        $this.AsyncResult
+                    )
+                }
+                catch {
+                    # Closing should remain safe during script cleanup.
+                }
+            }
+            else {
+                try {
+                    $this.PowerShell.Stop()
+                }
+                catch {
+                    # The runspace may already be shutting down.
+                }
+            }
+
+            $this.PowerShell.Dispose()
+            $this.Runspace.Dispose()
+            $this.Disposed = $true
+        }
+
+    Write-Output -NoEnumerate $Controller
+}
+
+function Close-AuthProgress {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        $Popup,
+
+        [string]$Reason = 'Complete'
+    )
+
+    if ($null -ne $Popup) {
+        $Popup.Close($Reason)
+    }
+}
