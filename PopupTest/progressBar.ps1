@@ -447,17 +447,3 @@ function Show-AuthProgress {
 
     Write-Output -NoEnumerate $Controller
 }
-
-function Close-AuthProgress {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        $Popup,
-
-        [string]$Reason = 'Complete'
-    )
-
-    if ($null -ne $Popup) {
-        $Popup.Close($Reason)
-    }
-}
