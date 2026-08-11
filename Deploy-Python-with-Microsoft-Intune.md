@@ -1,6 +1,6 @@
 # Deploy Python with Microsoft Intune
 
-This guide describes how to deploy a managed, device-wide installation of CPython to Windows devices using Microsoft Intune.
+This guide describes how to deploy a managed, device-wide installation of Python to Windows devices using Microsoft Intune.
 
 The recommended approach is to package the official 64-bit offline Python installer as a Win32 app and install it in the **System** context. This provides a predictable installation directory, makes Python available to all users and system processes, and supports standard Intune detection and supersedence.
 
