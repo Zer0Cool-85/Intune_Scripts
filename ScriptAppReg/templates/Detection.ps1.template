@@ -1,0 +1,67 @@
+#Requires -Version 5.1
+
+# Intune considers this app detected only when this script exits 0 and writes
+# a nonempty value to STDOUT. Detection failures intentionally produce no
+# STDERR output.
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = 'SilentlyContinue'
+
+function Get-EmbeddedConfiguration {
+    $configurationJson = [System.Text.Encoding]::UTF8.GetString(
+        [Convert]::FromBase64String('@@CONFIG_BASE64@@')
+    )
+
+    return ($configurationJson | ConvertFrom-Json)
+}
+
+$baseKey = $null
+$uninstallKey = $null
+$detected = $false
+
+try {
+    $configuration = Get-EmbeddedConfiguration
+    $application = $configuration.Application
+    $registrySubKey = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$($application.RegistryKeyName)"
+
+    $baseKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey(
+        [Microsoft.Win32.RegistryHive]::LocalMachine,
+        [Microsoft.Win32.RegistryView]::Registry64
+    )
+
+    $uninstallKey = $baseKey.OpenSubKey($registrySubKey)
+
+    if ($null -ne $uninstallKey) {
+        $detectedName = [string]$uninstallKey.GetValue('DisplayName')
+        $detectedPublisher = [string]$uninstallKey.GetValue('Publisher')
+        $detectedVersionText = [string]$uninstallKey.GetValue('DisplayVersion')
+
+        $detectedVersion = [version]$detectedVersionText
+        $minimumVersion = [version][string]$application.DisplayVersion
+
+        $detected = (
+            $detectedName -eq [string]$application.DisplayName -and
+            $detectedPublisher -eq [string]$application.Publisher -and
+            $detectedVersion -ge $minimumVersion
+        )
+    }
+}
+catch {
+    $detected = $false
+}
+finally {
+    if ($null -ne $uninstallKey) {
+        $uninstallKey.Dispose()
+    }
+
+    if ($null -ne $baseKey) {
+        $baseKey.Dispose()
+    }
+}
+
+if ($detected) {
+    Write-Output 'Application registration detected.'
+    exit 0
+}
+
+exit 1

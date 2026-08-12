@@ -1,0 +1,28 @@
+{
+  "Package": {
+    "Name": "Admin Elevation Inventory Registration",
+    "Version": "1.0.0"
+  },
+  "Application": {
+    "DisplayName": "Company Admin Elevation Client",
+    "DisplayVersion": "1.0.0",
+    "Publisher": "Your Company",
+    "InstallLocation": "C:\\ProgramData\\YourCompany\\AdminElevation",
+    "RegistryKeyName": "YourCompany.AdminElevation",
+    "UninstallScriptPath": "C:\\ProgramData\\YourCompany\\AdminElevation\\Uninstall.ps1",
+    "DisplayIconPath": "",
+    "EstimatedSizeKB": 0
+  },
+  "Presence": {
+    "MatchMode": "All",
+    "RequiredFiles": [
+      "C:\\ProgramData\\YourCompany\\AdminElevation\\AdminElevation.ps1"
+    ],
+    "RequiredScheduledTasks": []
+  },
+  "Registration": {
+    "NoModify": true,
+    "NoRepair": true,
+    "NoRemove": true
+  }
+}

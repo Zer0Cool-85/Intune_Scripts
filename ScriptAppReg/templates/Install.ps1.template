@@ -1,0 +1,189 @@
+#Requires -Version 5.1
+
+[CmdletBinding()]
+param()
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = 'Stop'
+
+function Get-EmbeddedConfiguration {
+    $configurationJson = [System.Text.Encoding]::UTF8.GetString(
+        [Convert]::FromBase64String('@@CONFIG_BASE64@@')
+    )
+
+    return ($configurationJson | ConvertFrom-Json)
+}
+
+function Test-OriginalApplicationPresent {
+    param(
+        [Parameter(Mandatory)]
+        [object]$PresenceConfiguration
+    )
+
+    $markerResults = New-Object 'System.Collections.Generic.List[bool]'
+
+    foreach ($requiredFile in @($PresenceConfiguration.RequiredFiles)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$requiredFile)) {
+            $markerResults.Add(
+                (Test-Path -LiteralPath ([string]$requiredFile) -PathType Leaf)
+            )
+        }
+    }
+
+    foreach ($scheduledTaskName in @($PresenceConfiguration.RequiredScheduledTasks)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$scheduledTaskName)) {
+            $taskExists = $null -ne (
+                Get-ScheduledTask `
+                    -TaskName ([string]$scheduledTaskName) `
+                    -ErrorAction SilentlyContinue
+            )
+
+            $markerResults.Add($taskExists)
+        }
+    }
+
+    if ($markerResults.Count -eq 0) {
+        return $false
+    }
+
+    if ([string]$PresenceConfiguration.MatchMode -eq 'Any') {
+        return $markerResults.Contains($true)
+    }
+
+    return (-not $markerResults.Contains($false))
+}
+
+$configuration = Get-EmbeddedConfiguration
+$application = $configuration.Application
+$registration = $configuration.Registration
+$registrySubKey = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$($application.RegistryKeyName)"
+
+$baseKey = $null
+$uninstallKey = $null
+$exitCode = 0
+
+try {
+    if (-not (Test-OriginalApplicationPresent -PresenceConfiguration $configuration.Presence)) {
+        throw 'The configured application-presence requirements were not satisfied. Registration was not created.'
+    }
+
+    $baseKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey(
+        [Microsoft.Win32.RegistryHive]::LocalMachine,
+        [Microsoft.Win32.RegistryView]::Registry64
+    )
+
+    $uninstallKey = $baseKey.CreateSubKey($registrySubKey)
+
+    if ($null -eq $uninstallKey) {
+        throw "Unable to create HKLM:\$registrySubKey."
+    }
+
+    $stringValues = [ordered]@{
+        DisplayName = [string]$application.DisplayName
+        DisplayVersion = [string]$application.DisplayVersion
+        Publisher = [string]$application.Publisher
+        InstallLocation = [string]$application.InstallLocation
+    }
+
+    foreach ($value in $stringValues.GetEnumerator()) {
+        $uninstallKey.SetValue(
+            [string]$value.Key,
+            [string]$value.Value,
+            [Microsoft.Win32.RegistryValueKind]::String
+        )
+    }
+
+    if ([string]::IsNullOrWhiteSpace([string]$uninstallKey.GetValue('InstallDate'))) {
+        $uninstallKey.SetValue(
+            'InstallDate',
+            (Get-Date -Format 'yyyyMMdd'),
+            [Microsoft.Win32.RegistryValueKind]::String
+        )
+    }
+
+    $registrationFlags = [ordered]@{
+        NoModify = [bool]$registration.NoModify
+        NoRepair = [bool]$registration.NoRepair
+        NoRemove = [bool]$registration.NoRemove
+    }
+
+    foreach ($flag in $registrationFlags.GetEnumerator()) {
+        if ($flag.Value) {
+            $uninstallKey.SetValue(
+                [string]$flag.Key,
+                1,
+                [Microsoft.Win32.RegistryValueKind]::DWord
+            )
+        }
+        else {
+            $uninstallKey.DeleteValue([string]$flag.Key, $false)
+        }
+    }
+
+    $estimatedSize = [long]$application.EstimatedSizeKB
+    if ($estimatedSize -gt 0) {
+        $uninstallKey.SetValue(
+            'EstimatedSize',
+            [uint32]$estimatedSize,
+            [Microsoft.Win32.RegistryValueKind]::DWord
+        )
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace([string]$application.DisplayIconPath)) {
+        $uninstallKey.SetValue(
+            'DisplayIcon',
+            [string]$application.DisplayIconPath,
+            [Microsoft.Win32.RegistryValueKind]::String
+        )
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace([string]$application.UninstallScriptPath)) {
+        $uninstallScriptPath = [string]$application.UninstallScriptPath
+
+        if (Test-Path -LiteralPath $uninstallScriptPath -PathType Leaf) {
+            $powerShellPath = "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+            $uninstallCommand = (
+                "`"$powerShellPath`" " +
+                '-NoProfile -NonInteractive -ExecutionPolicy Bypass ' +
+                "-File `"$uninstallScriptPath`""
+            )
+
+            $uninstallKey.SetValue(
+                'UninstallString',
+                $uninstallCommand,
+                [Microsoft.Win32.RegistryValueKind]::String
+            )
+
+            $uninstallKey.SetValue(
+                'QuietUninstallString',
+                $uninstallCommand,
+                [Microsoft.Win32.RegistryValueKind]::String
+            )
+        }
+        else {
+            Write-Output "Optional uninstall script was not found: $uninstallScriptPath"
+        }
+    }
+
+    Write-Output (
+        "Registered '{0}' version {1} under HKLM:\{2}." -f
+        $application.DisplayName,
+        $application.DisplayVersion,
+        $registrySubKey
+    )
+}
+catch {
+    Write-Error "Application registration failed: $($_.Exception.Message)"
+    $exitCode = 1
+}
+finally {
+    if ($null -ne $uninstallKey) {
+        $uninstallKey.Dispose()
+    }
+
+    if ($null -ne $baseKey) {
+        $baseKey.Dispose()
+    }
+}
+
+exit $exitCode

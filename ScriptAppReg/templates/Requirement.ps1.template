@@ -1,0 +1,74 @@
+#Requires -Version 5.1
+
+# Intune custom requirement rule output:
+#   1 = the original application is present
+#   0 = the original application is not present
+# The process intentionally exits 0 in either case so Intune can evaluate the
+# integer written to STDOUT.
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = 'SilentlyContinue'
+
+function Get-EmbeddedConfiguration {
+    $configurationJson = [System.Text.Encoding]::UTF8.GetString(
+        [Convert]::FromBase64String('@@CONFIG_BASE64@@')
+    )
+
+    return ($configurationJson | ConvertFrom-Json)
+}
+
+function Test-OriginalApplicationPresent {
+    param(
+        [Parameter(Mandatory)]
+        [object]$PresenceConfiguration
+    )
+
+    $markerResults = New-Object 'System.Collections.Generic.List[bool]'
+
+    foreach ($requiredFile in @($PresenceConfiguration.RequiredFiles)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$requiredFile)) {
+            $markerResults.Add(
+                (Test-Path -LiteralPath ([string]$requiredFile) -PathType Leaf)
+            )
+        }
+    }
+
+    foreach ($scheduledTaskName in @($PresenceConfiguration.RequiredScheduledTasks)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$scheduledTaskName)) {
+            $taskExists = $null -ne (
+                Get-ScheduledTask `
+                    -TaskName ([string]$scheduledTaskName) `
+                    -ErrorAction SilentlyContinue
+            )
+
+            $markerResults.Add($taskExists)
+        }
+    }
+
+    if ($markerResults.Count -eq 0) {
+        return $false
+    }
+
+    if ([string]$PresenceConfiguration.MatchMode -eq 'Any') {
+        return $markerResults.Contains($true)
+    }
+
+    return (-not $markerResults.Contains($false))
+}
+
+try {
+    $configuration = Get-EmbeddedConfiguration
+    $isPresent = Test-OriginalApplicationPresent -PresenceConfiguration $configuration.Presence
+
+    if ($isPresent) {
+        Write-Output 1
+    }
+    else {
+        Write-Output 0
+    }
+}
+catch {
+    Write-Output 0
+}
+
+exit 0

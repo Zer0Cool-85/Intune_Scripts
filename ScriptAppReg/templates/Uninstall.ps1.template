@@ -1,0 +1,45 @@
+#Requires -Version 5.1
+
+[CmdletBinding()]
+param()
+
+# This script removes only the inventory registration. It does not uninstall
+# the underlying PowerShell application, its files, or its scheduled tasks.
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = 'Stop'
+
+function Get-EmbeddedConfiguration {
+    $configurationJson = [System.Text.Encoding]::UTF8.GetString(
+        [Convert]::FromBase64String('@@CONFIG_BASE64@@')
+    )
+
+    return ($configurationJson | ConvertFrom-Json)
+}
+
+$configuration = Get-EmbeddedConfiguration
+$registrySubKey = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$($configuration.Application.RegistryKeyName)"
+
+$baseKey = $null
+$exitCode = 0
+
+try {
+    $baseKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey(
+        [Microsoft.Win32.RegistryHive]::LocalMachine,
+        [Microsoft.Win32.RegistryView]::Registry64
+    )
+
+    $baseKey.DeleteSubKeyTree($registrySubKey, $false)
+    Write-Output "Removed inventory registration HKLM:\$registrySubKey."
+}
+catch {
+    Write-Error "Unable to remove application registration: $($_.Exception.Message)"
+    $exitCode = 1
+}
+finally {
+    if ($null -ne $baseKey) {
+        $baseKey.Dispose()
+    }
+}
+
+exit $exitCode
