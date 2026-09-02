@@ -718,6 +718,16 @@ function Show-SystemSupportInfo {
     else {
         [System.Windows.ResizeMode]::NoResize
     }
+    
+    # Open at minimum width and use the full available screen height.
+    $workArea = [System.Windows.SystemParameters]::WorkArea
+    
+    $window.WindowState = [System.Windows.WindowState]::Normal
+    $window.WindowStartupLocation = [System.Windows.WindowStartupLocation]::Manual
+    $window.Width = $window.MinWidth
+    $window.Height = $workArea.Height
+    $window.Top = $workArea.Top
+    $window.Left = $workArea.Left + (($workArea.Width - $window.Width) / 2)
 
     $headerBar         = $window.FindName('HeaderBar')
     $titleText         = $window.FindName('TitleText')
