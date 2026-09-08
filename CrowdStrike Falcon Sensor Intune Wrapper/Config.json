@@ -1,0 +1,16 @@
+{
+  "PackageRevision": "2026.09.08.1",
+  "RequireValidCrowdStrikeSignature": true,
+  "RequireTenantMatch": true,
+  "RequireRunningServices": true,
+  "RequireProvisioningToken": false,
+  "ProvisioningWaitTimeMilliseconds": 1200000,
+  "GroupingTags": [],
+  "ProxyHost": "",
+  "ProxyPort": 0,
+  "PostInstallVerificationTimeoutSeconds": 180,
+  "InstallerBusyRetryCount": 3,
+  "InstallerBusyRetryDelaySeconds": 30,
+  "EnableUninstall": false,
+  "AllowPackagedInstallerForUninstall": false
+}
