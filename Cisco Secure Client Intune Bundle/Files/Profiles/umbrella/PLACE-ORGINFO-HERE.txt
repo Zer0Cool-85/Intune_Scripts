@@ -1,4 +1,0 @@
-Replace this placeholder with the OrgInfo.json file downloaded from your
-Cisco Umbrella dashboard. The final path must be:
-
-Files\Profiles\umbrella\OrgInfo.json
