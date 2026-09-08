@@ -1,0 +1,17 @@
+{
+  "PackageRevision": "2026.09.08.1",
+  "InstallUmbrella": true,
+  "InstallDart": true,
+  "RequireOrgInfo": true,
+  "RequireValidCiscoSignature": true,
+  "DisableVpn": false,
+  "EnableLockdown": false,
+  "HideModulesFromProgramsAndFeatures": false,
+  "DisableCustomerExperienceFeedback": false,
+  "RestrictUpgradeWhenVpnActive": false,
+  "FailIfExistingOrgInfoDiffers": true,
+  "RemoveOrgInfoOnUninstall": false,
+  "BlockUninstallIfAdditionalModulesDetected": true,
+  "MsiBusyRetryCount": 5,
+  "MsiBusyRetryDelaySeconds": 30
+}
