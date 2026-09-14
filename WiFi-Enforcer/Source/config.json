@@ -1,0 +1,14 @@
+{
+  "ConfigurationReady": false,
+  "PolicyVersion": "1.1.0",
+  "PreferredSsid": "CHANGE_ME_NEW_OFFICE_SSID",
+  "PreferredProfileName": "",
+  "LegacySsids": ["CHANGE_ME_OLD_OFFICE_SSID"],
+  "EnforcementIntervalMinutes": 15,
+  "LegacySsidAction": "DisableAutoConnect",
+  "ConnectWhenVisible": false,
+  "MinimumSignalQuality": 40,
+  "ConnectionAttemptCooldownMinutes": 30,
+  "ConnectionTimeoutSeconds": 25,
+  "RequireSuccessfulPreferredConnectionBeforeRemoval": true
+}
