@@ -1,0 +1,384 @@
+{
+  "ToolVersion": "1.0.0",
+  "StartedUtc": "2026-09-21T20:54:20.5933248Z",
+  "CompletedUtc": "2026-09-21T20:54:49.6316013Z",
+  "RequestedCVEs": [
+    "CVE-2023-21608",
+    "CVE-2023-26360",
+    "CVE-2023-36884"
+  ],
+  "KEVSource": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+  "KEVCatalogVersion": "2026.09.21",
+  "KEVDateReleased": "09/21/2026 18:46:35",
+  "Warnings": [],
+  "CVEs": [
+    {
+      "CVE": "CVE-2023-36884",
+      "State": "PUBLISHED",
+      "Title": "Windows Search Remote Code Execution Vulnerability",
+      "Description": "Windows Search Remote Code Execution Vulnerability",
+      "Published": "07/11/2023 18:14:23",
+      "Updated": "08/10/2026 15:11:49",
+      "Vendors": "Microsoft",
+      "Products": "Windows 10 Version 1507; Windows 10 Version 1607; Windows 10 Version 1809; Windows 10 Version 21H2; Windows 10 Version 22H2; Windows 11 version 21H2; Windows 11 version 22H2; Windows Server 2008  Service Pack 2; Windows Server 2008 R2 Service Pack 1; Windows Server 2008 R2 Service Pack 1 (Server Core installation); Windows Server 2008 Service Pack 2; Windows Server 2008 Service Pack 2 (Server Core installation); Windows Server 2012; Windows Server 2012 (Server Core installation); Windows Server 2012 R2; Windows Server 2012 R2 (Server Core installation); Windows Server 2016; Windows Server 2016 (Server Core installation); Windows Server 2019; Windows Server 2019 (Server Core installation); Windows Server 2022",
+      "Affected": [
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 10 Version 1507",
+          "Platforms": "32-bit Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.10240.0 to < 10.0.10240.20107 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.10240.0\",\"lessThan\":\"10.0.10240.20107\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 10 Version 1607",
+          "Platforms": "32-bit Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.14393.0 to < 10.0.14393.6167 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.14393.0\",\"lessThan\":\"10.0.14393.6167\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 10 Version 1809",
+          "Platforms": "32-bit Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.17763.0 to < 10.0.17763.4737 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.17763.0\",\"lessThan\":\"10.0.17763.4737\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 10 Version 1809",
+          "Platforms": "ARM64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.0 to < 10.0.17763.4737 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.0\",\"lessThan\":\"10.0.17763.4737\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 10 Version 21H2",
+          "Platforms": "32-bit Systems; ARM64-based Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.19044.0 to < 10.0.19044.3324 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.19044.0\",\"lessThan\":\"10.0.19044.3324\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 10 Version 22H2",
+          "Platforms": "32-bit Systems; ARM64-based Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.19045.0 to < 10.0.19045.3324 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.19045.0\",\"lessThan\":\"10.0.19045.3324\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 11 version 21H2",
+          "Platforms": "ARM64-based Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.22000.0 to < 10.0.22000.2295 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.22000.0\",\"lessThan\":\"10.0.22000.2295\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows 11 version 22H2",
+          "Platforms": "ARM64-based Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.22621.0 to < 10.0.22621.2134 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.22621.0\",\"lessThan\":\"10.0.22621.2134\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2008  Service Pack 2",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.0.6003.0 to < 6.0.6003.22216 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.0.6003.0\",\"lessThan\":\"6.0.6003.22216\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2008 R2 Service Pack 1",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.1.7601.0 to < 6.1.7601.26664 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.1.7601.0\",\"lessThan\":\"6.1.7601.26664\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2008 R2 Service Pack 1 (Server Core installation)",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.1.7601.0 to < 6.1.7601.26664 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.1.7601.0\",\"lessThan\":\"6.1.7601.26664\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2008 Service Pack 2",
+          "Platforms": "32-bit Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.0.6003.0 to < 6.0.6003.22216 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.0.6003.0\",\"lessThan\":\"6.0.6003.22216\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2008 Service Pack 2 (Server Core installation)",
+          "Platforms": "32-bit Systems; x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.0.6003.0 to < 6.0.6003.22216 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.0.6003.0\",\"lessThan\":\"6.0.6003.22216\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2012",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.2.9200.0 to < 6.2.9200.24414 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.2.9200.0\",\"lessThan\":\"6.2.9200.24414\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2012 (Server Core installation)",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.2.9200.0 to < 6.2.9200.24414 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.2.9200.0\",\"lessThan\":\"6.2.9200.24414\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2012 R2",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.3.9600.0 to < 6.3.9600.21503 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.3.9600.0\",\"lessThan\":\"6.3.9600.21503\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2012 R2 (Server Core installation)",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 6.3.9600.0 to < 6.3.9600.21503 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"6.3.9600.0\",\"lessThan\":\"6.3.9600.21503\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2016",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.14393.0 to < 10.0.14393.6167 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.14393.0\",\"lessThan\":\"10.0.14393.6167\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2016 (Server Core installation)",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.14393.0 to < 10.0.14393.6167 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.14393.0\",\"lessThan\":\"10.0.14393.6167\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2019",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.17763.0 to < 10.0.17763.4737 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.17763.0\",\"lessThan\":\"10.0.17763.4737\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2019 (Server Core installation)",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.17763.0 to < 10.0.17763.4737 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.17763.0\",\"lessThan\":\"10.0.17763.4737\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        },
+        {
+          "Vendor": "Microsoft",
+          "Product": "Windows Server 2022",
+          "Platforms": "x64-based Systems",
+          "Modules": "",
+          "Version statements": "affected: 10.0.20348.0 to < 10.0.20348.1906 (version type: custom)",
+          "Default status": "not provided",
+          "Source": "microsoft",
+          "VersionsJson": "[{\"version\":\"10.0.20348.0\",\"lessThan\":\"10.0.20348.1906\",\"versionType\":\"custom\",\"status\":\"affected\"}]"
+        }
+      ],
+      "CVSS": "7.5 (v3.1)",
+      "Metrics": [
+        {
+          "Version": "3.1",
+          "Score": 7.5,
+          "Severity": "HIGH",
+          "Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+          "Scenarios": "GENERAL",
+          "Source": "microsoft"
+        }
+      ],
+      "KEV": "Listed",
+      "KEVDateAdded": "2023-07-17",
+      "KEVRequiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+      "KEVNotes": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36884;  https://nvd.nist.gov/vuln/detail/CVE-2023-36884",
+      "EPSS": 0.98932,
+      "EPSSPercent": "98.932%",
+      "EPSSStatus": "Available",
+      "EPSSDate": "2026-09-21",
+      "EPSSPercentile": "0.999280000",
+      "Solutions": "",
+      "Workarounds": "",
+      "References": [
+        "http://seclists.org/fulldisclosure/2023/Jul/43",
+        "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36884",
+        "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-36884"
+      ],
+      "Applicability": "Unverified - inventory comparison required",
+      "Source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2023/36xxx/CVE-2023-36884.json",
+      "RetrievedUtc": "2026-09-21T20:54:49.3755563Z",
+      "LookupErrors": []
+    },
+    {
+      "CVE": "CVE-2023-26360",
+      "State": "PUBLISHED",
+      "Title": "Adobe ColdFusion Improper Access Control Arbitrary code execution",
+      "Description": "Adobe ColdFusion versions 2018 Update 15 (and earlier) and 2021 Update 5 (and earlier) are affected by an Improper Access Control vulnerability that could result in arbitrary code execution in the context of the current user. Exploitation of this issue does not require user interaction.",
+      "Published": "03/23/2023 00:00:00",
+      "Updated": "10/21/2025 23:15:21",
+      "Vendors": "Adobe",
+      "Products": "ColdFusion",
+      "Affected": [
+        {
+          "Vendor": "Adobe",
+          "Product": "ColdFusion",
+          "Platforms": "",
+          "Modules": "",
+          "Version statements": "affected: unspecified to <= CF2018U15 (version type: custom)\naffected: unspecified to <= CF2021U5 (version type: custom)\naffected: unspecified to <= None (version type: custom)",
+          "Default status": "not provided",
+          "Source": "adobe",
+          "VersionsJson": "[{\"version\":\"unspecified\",\"lessThanOrEqual\":\"CF2018U15\",\"status\":\"affected\",\"versionType\":\"custom\"},{\"version\":\"unspecified\",\"lessThanOrEqual\":\"CF2021U5\",\"status\":\"affected\",\"versionType\":\"custom\"},{\"version\":\"unspecified\",\"lessThanOrEqual\":\"None\",\"status\":\"affected\",\"versionType\":\"custom\"}]"
+        }
+      ],
+      "CVSS": "8.6 (v3.1)",
+      "Metrics": [
+        {
+          "Version": "3.1",
+          "Score": 8.6,
+          "Severity": "HIGH",
+          "Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+          "Scenarios": "",
+          "Source": "adobe"
+        }
+      ],
+      "KEV": "Listed",
+      "KEVDateAdded": "2023-03-15",
+      "KEVRequiredAction": "Apply updates per vendor instructions.",
+      "KEVNotes": "https://helpx.adobe.com/security/products/coldfusion/apsb23-25.html;  https://nvd.nist.gov/vuln/detail/CVE-2023-26360",
+      "EPSS": 0.97339,
+      "EPSSPercent": "97.339%",
+      "EPSSStatus": "Available",
+      "EPSSDate": "2026-09-21",
+      "EPSSPercentile": "0.998960000",
+      "Solutions": "",
+      "Workarounds": "",
+      "References": [
+        "http://packetstormsecurity.com/files/172079/Adobe-ColdFusion-Unauthenticated-Remote-Code-Execution.html",
+        "https://helpx.adobe.com/security/products/coldfusion/apsb23-25.html",
+        "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-26360"
+      ],
+      "Applicability": "Unverified - inventory comparison required",
+      "Source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2023/26xxx/CVE-2023-26360.json",
+      "RetrievedUtc": "2026-09-21T20:54:43.7335091Z",
+      "LookupErrors": []
+    },
+    {
+      "CVE": "CVE-2023-21608",
+      "State": "PUBLISHED",
+      "Title": "Adobe Acrobat Reader DC resetForm Use-After-Free Remote Code Execution Vulnerability",
+      "Description": "Adobe Acrobat Reader versions 22.003.20282 (and earlier), 22.003.20281 (and earlier) and 20.005.30418 (and earlier) are affected by a Use After Free vulnerability that could result in arbitrary code execution in the context of the current user. Exploitation of this issue requires user interaction in that a victim must open a malicious file.",
+      "Published": "01/18/2023 00:00:00",
+      "Updated": "10/21/2025 23:15:28",
+      "Vendors": "Adobe",
+      "Products": "Acrobat Reader",
+      "Affected": [
+        {
+          "Vendor": "Adobe",
+          "Product": "Acrobat Reader",
+          "Platforms": "",
+          "Modules": "",
+          "Version statements": "affected: unspecified to <= 20.005.30418 (version type: custom)\naffected: unspecified to <= 22.003.20282 (version type: custom)\naffected: unspecified to <= 22.003.20281 (version type: custom)\naffected: unspecified to <= None (version type: custom)",
+          "Default status": "not provided",
+          "Source": "adobe",
+          "VersionsJson": "[{\"version\":\"unspecified\",\"lessThanOrEqual\":\"20.005.30418\",\"status\":\"affected\",\"versionType\":\"custom\"},{\"version\":\"unspecified\",\"lessThanOrEqual\":\"22.003.20282\",\"status\":\"affected\",\"versionType\":\"custom\"},{\"version\":\"unspecified\",\"lessThanOrEqual\":\"22.003.20281\",\"status\":\"affected\",\"versionType\":\"custom\"},{\"version\":\"unspecified\",\"lessThanOrEqual\":\"None\",\"status\":\"affected\",\"versionType\":\"custom\"}]"
+        }
+      ],
+      "CVSS": "7.8 (v3.1)",
+      "Metrics": [
+        {
+          "Version": "3.1",
+          "Score": 7.8,
+          "Severity": "HIGH",
+          "Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "Scenarios": "",
+          "Source": "adobe"
+        }
+      ],
+      "KEV": "Listed",
+      "KEVDateAdded": "2023-10-10",
+      "KEVRequiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+      "KEVNotes": "https://helpx.adobe.com/security/products/acrobat/apsb23-01.html;  https://nvd.nist.gov/vuln/detail/CVE-2023-21608",
+      "EPSS": 0.61475,
+      "EPSSPercent": "61.475%",
+      "EPSSStatus": "Available",
+      "EPSSDate": "2026-09-21",
+      "EPSSPercentile": "0.991540000",
+      "Solutions": "",
+      "Workarounds": "",
+      "References": [
+        "https://helpx.adobe.com/security/products/acrobat/apsb23-01.html",
+        "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-21608"
+      ],
+      "Applicability": "Unverified - inventory comparison required",
+      "Source": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2023/21xxx/CVE-2023-21608.json",
+      "RetrievedUtc": "2026-09-21T20:54:38.6415260Z",
+      "LookupErrors": []
+    }
+  ]
+}
