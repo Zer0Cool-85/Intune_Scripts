@@ -3,30 +3,38 @@
 .SYNOPSIS
 Updates an existing Adobe Reader installation using WinGet. Never installs Reader when absent.
 .DESCRIPTION
-Version 1.0.0. Windows PowerShell 5.1 or PowerShell 7; run elevated, native 64-bit.
+Version 1.1.0. Windows PowerShell 5.1 or PowerShell 7; native 64-bit on 64-bit Windows.
 
-Engine Auto selects CLI for a user account and Module for NT AUTHORITY\SYSTEM.
-CLI uses winget list, exact Reader package IDs, list --upgrade-available, then
+Uses winget.exe directly in both user and SYSTEM execution contexts. Resolves
+the current account's command path, registered App Installer package paths,
+then matching WindowsApps package directories as a fallback. Candidates are
+ordered by context, architecture preference, and numeric package version.
+Each candidate must successfully run --version before it is selected.
+No Microsoft.WinGet.Client module is installed or required.
+
+Uses winget list, exact Reader package IDs, list --upgrade-available, then
 winget upgrade. It parses the exact ID and installed version from the table;
 WinGet performs the version comparison. No fixed column offsets or translated
 column labels are used. Truncated/unrecognized results fail instead of guessing.
 
-Module uses Microsoft.WinGet.Client structured objects and IsUpdateAvailable.
-This is Microsoft's supported WinGet interface for SYSTEM/machine-wide apps.
-Preinstall Microsoft.WinGet.Client in AllUsers scope and provision/repair WinGet
-before deploying this script. This script does not install its prerequisites.
+Direct CLI use under SYSTEM is a practical workaround, not Microsoft's supported
+SYSTEM interface. Resolving an executable does not impersonate its registered
+user or fix missing dependencies/sources/policies. Subsequent command failures
+are reported. App Installer/WinGet must already be installed and functional.
+No WindowsApps permissions or package registrations are changed.
 
 Only these IDs from the winget community source are eligible:
   Adobe.Acrobat.Reader.64-bit
   Adobe.Acrobat.Reader.32-bit
 Store-installed or migrated copies work if WinGet correlates their installation
 with one of those IDs. Unmapped Reader/generic Acrobat candidates are reported
-for review, never installed over. Per-user-only installations are outside the
-intended SYSTEM deployment scope. This is not an Acrobat Pro updater.
+for review, never installed over. Default Scope machine targets machine-wide
+Reader. Scope user is for the current user only and cannot be used as SYSTEM;
+the installer must support that scope. This is not an Acrobat Pro updater.
 
 Latest means the newest applicable version WinGet offers from its catalog,
-which can lag Adobe's releases. CLI refreshes the winget source first. Module
-uses the client's normal source refresh behavior. Unknown installed versions,
+which can lag Adobe's releases. The script refreshes the winget source first.
+Unknown installed versions,
 blocked upgrades, source failures and failed verification are not success.
 No --force, --include-unknown upgrade, hash bypass, or reboot request is used.
 
@@ -38,14 +46,18 @@ EXIT CODES
        Intune Win32 apps can map 3010 to soft reboot. Platform scripts treat
        nonzero as failure; account for that if using Platform scripts.
 
-LOG: %ProgramData%\AdobeReaderWinGet\Update-AdobeReaderWithWinGet.log
+LOG: %ProgramData%\AdobeReaderWinGet\Update-AdobeReaderWithWinGet.log for
+SYSTEM/elevated runs; %LOCALAPPDATA%\AdobeReaderWinGet for standard-user runs.
 CheckOnly still writes logs and can refresh WinGet metadata; it does not update Reader.
 
-INTUNE: Run as SYSTEM, 64-bit host, using Engine Auto/Module. Deploy the WinGet
-module/prerequisites first. Platform scripts are not a recurring patch schedule.
+INTUNE: Run as SYSTEM, 64-bit host, default Scope machine. Pilot the direct
+CLI path in SYSTEM context. Platform scripts are not a recurring patch schedule.
 
 .PARAMETER Engine
-Auto (default), CLI (elevated user only), or Module (SYSTEM supported).
+CLI (default) or Auto. Both use CLI; Auto is retained for old command lines.
+.PARAMETER Scope
+machine (default) or user. Machine updates require elevation; CheckOnly may run
+without elevation. User scope operates only on the account running this script.
 .PARAMETER CheckOnly
 Report installed packages and upgrade availability without upgrading Reader.
 .EXAMPLE
@@ -53,7 +65,9 @@ Report installed packages and upgrade availability without upgrading Reader.
 .EXAMPLE
 .\Update-AdobeReaderWithWinGet.ps1 -Engine CLI
 .EXAMPLE
-.\Update-AdobeReaderWithWinGet.ps1 -Engine Module
+.\Update-AdobeReaderWithWinGet.ps1 -CheckOnly
+.EXAMPLE
+.\Update-AdobeReaderWithWinGet.ps1 -Scope user -CheckOnly
 .LINK
 https://learn.microsoft.com/en-us/windows/package-manager/winget/list
 .LINK
@@ -65,8 +79,10 @@ https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Auto', 'CLI', 'Module')]
-    [string]$Engine = 'Auto',
+    [ValidateSet('Auto', 'CLI')]
+    [string]$Engine = 'CLI',
+    [ValidateSet('machine', 'user')]
+    [string]$Scope = 'machine',
     [switch]$CheckOnly
 )
 
@@ -102,16 +118,16 @@ function Get-ExitHex {
     return '0x{0:X8}' -f [BitConverter]::ToUInt32([BitConverter]::GetBytes($Code), 0)
 }
 
-function Invoke-WinGetCli {
-    param([string[]]$Arguments)
+function Invoke-WinGetProcess {
+    param([string]$Path, [string[]]$Arguments, [int]$TimeoutSeconds = 0)
     # All arguments are internal fixed tokens/allowlisted IDs without spaces.
     # Process APIs capture both streams without PowerShell 5.1 native-stderr traps.
     if (@($Arguments | Where-Object { $_ -match '[\s"]' }).Count -gt 0) {
         throw 'Unexpected argument requiring quoting.'
     }
-    Write-Log ('winget ' + ($Arguments -join ' '))
     $info = New-Object System.Diagnostics.ProcessStartInfo
-    $info.FileName = $script:WinGetPath
+    $info.FileName = $Path
+    $info.WorkingDirectory = Split-Path -Path $Path -Parent
     $info.Arguments = $Arguments -join ' '
     $info.UseShellExecute = $false
     $info.CreateNoWindow = $true
@@ -125,16 +141,120 @@ function Invoke-WinGetCli {
         if (-not $process.Start()) { throw 'Could not start WinGet.' }
         $stdout = $process.StandardOutput.ReadToEndAsync()
         $stderr = $process.StandardError.ReadToEndAsync()
-        $process.WaitForExit()
+        if ($TimeoutSeconds -gt 0) {
+            if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
+                try { $process.Kill() } catch { }
+                throw "WinGet executable probe timed out after $TimeoutSeconds seconds."
+            }
+        }
+        else { $process.WaitForExit() }
         $exitCode = $process.ExitCode
         $text = $stdout.GetAwaiter().GetResult() + [Environment]::NewLine + $stderr.GetAwaiter().GetResult()
         $text = $text -replace '\x1B\[[0-?]*[ -/]*[@-~]', ''
-        Write-Log $text.Trim()
         $hex = Get-ExitHex -Code $exitCode
-        Write-Log "WinGet exit: $exitCode ($hex)"
         [pscustomobject]@{ Code = $exitCode; Hex = $hex; Text = $text }
     }
     finally { $process.Dispose() }
+}
+
+function Resolve-WinGetPath {
+    param([bool]$IsSystem, [bool]$IsElevated)
+
+    $architecture = if ($env:PROCESSOR_ARCHITEW6432) {
+        $env:PROCESSOR_ARCHITEW6432
+    }
+    else { $env:PROCESSOR_ARCHITECTURE }
+    $architectureOrder = switch ($architecture.ToUpperInvariant()) {
+        'ARM64' { @('arm64', 'x64', 'x86', 'neutral') }
+        'AMD64' { @('x64', 'x86', 'neutral') }
+        default { @('x86', 'neutral') }
+    }
+    $candidates = @(
+        # SYSTEM must not borrow another user's execution alias. Direct package
+        # paths below are launched with the current token, without impersonation.
+        if (-not $IsSystem) {
+            foreach ($command in @(Get-Command -Name winget.exe -CommandType Application -All -ErrorAction SilentlyContinue)) {
+                [pscustomobject]@{ Path = $command.Source; Priority = 0; ArchitectureRank = 0; Version = [version]'0.0'; Origin = 'Current account command' }
+            }
+        }
+
+        # Get-AppxPackage may be unavailable in some PowerShell environments;
+        # the directory fallback does not depend on the Appx module.
+        if (Get-Command -Name Get-AppxPackage -ErrorAction SilentlyContinue) {
+            $queries = @()
+            if (-not $IsSystem) { $queries += [pscustomobject]@{ AllUsers = $false; Priority = 1 } }
+            if ($IsElevated) { $queries += [pscustomobject]@{ AllUsers = $true; Priority = 2 } }
+            foreach ($query in $queries) {
+                try {
+                    $appxArgs = @{ Name = 'Microsoft.DesktopAppInstaller'; ErrorAction = 'Stop' }
+                    if ($query.AllUsers) { $appxArgs.AllUsers = $true }
+                    foreach ($package in @(Get-AppxPackage @appxArgs)) {
+                        if ($package.PackageFamilyName -ne 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe') { continue }
+                        $packageArchitecture = ([string]$package.Architecture).ToLowerInvariant()
+                        if ($packageArchitecture -notin $architectureOrder -or -not $package.InstallLocation) { continue }
+                        [pscustomobject]@{
+                            Path = Join-Path -Path $package.InstallLocation -ChildPath 'winget.exe'
+                            Priority = $query.Priority
+                            ArchitectureRank = [array]::IndexOf($architectureOrder, $packageArchitecture)
+                            Version = [version]$package.Version
+                            Origin = 'App Installer registration'
+                        }
+                    }
+                }
+                catch { Write-Log "App Installer discovery unavailable for this query: $($_.Exception.Message)" }
+            }
+        }
+
+        $programDirectories = @(@($env:ProgramW6432, $env:ProgramFiles) | Where-Object { $_ } | Select-Object -Unique)
+        foreach ($programDirectory in $programDirectories) {
+            $windowsApps = Join-Path -Path $programDirectory -ChildPath 'WindowsApps'
+            try {
+                if (-not (Test-Path -LiteralPath $windowsApps -PathType Container)) { continue }
+                $folders = @(Get-ChildItem -LiteralPath $windowsApps -Directory -Filter 'Microsoft.DesktopAppInstaller_*__8wekyb3d8bbwe' -ErrorAction Stop)
+                foreach ($folder in $folders) {
+                    if ($folder.Name -notmatch '^Microsoft\.DesktopAppInstaller_(?<PackageVersion>\d+\.\d+\.\d+\.\d+)_(?<Architecture>x64|x86|arm64|neutral)__8wekyb3d8bbwe$') { continue }
+                    $folderVersion = [version]$Matches.PackageVersion
+                    $folderArchitecture = $Matches.Architecture.ToLowerInvariant()
+                    if ($folderArchitecture -notin $architectureOrder) { continue }
+                    [pscustomobject]@{
+                        Path = Join-Path -Path $folder.FullName -ChildPath 'winget.exe'
+                        Priority = 3
+                        ArchitectureRank = [array]::IndexOf($architectureOrder, $folderArchitecture)
+                        Version = $folderVersion
+                        Origin = 'WindowsApps directory'
+                    }
+                }
+            }
+            catch { Write-Log "WindowsApps discovery unavailable: $($_.Exception.Message)" }
+        }
+    )
+    $sortProperties = @('Priority', 'ArchitectureRank', @{ Expression = { $_.Version }; Descending = $true })
+    $seen = @{}
+    foreach ($candidate in @($candidates | Sort-Object -Property $sortProperties)) {
+        if (-not $candidate.Path -or $seen.ContainsKey($candidate.Path)) { continue }
+        $seen[$candidate.Path] = $true
+        try {
+            if (-not (Test-Path -LiteralPath $candidate.Path -PathType Leaf)) { continue }
+            $probe = Invoke-WinGetProcess -Path $candidate.Path -Arguments @('--version') -TimeoutSeconds 15
+            if ($probe.Code -ne 0 -or $probe.Text.Trim() -notmatch '^v?\d+(\.\d+)+') {
+                Write-Log "Rejected WinGet candidate: $($candidate.Path); exit=$($probe.Hex); $($probe.Text.Trim())"
+                continue
+            }
+            Write-Log "Resolved WinGet: $($candidate.Path); version=$($probe.Text.Trim()); via=$($candidate.Origin)"
+            return $candidate.Path
+        }
+        catch { Write-Log "WinGet candidate failed: $($candidate.Path); $($_.Exception.Message)" }
+    }
+    throw 'No working winget.exe was found for this execution context. Verify App Installer and its dependencies.'
+}
+
+function Invoke-WinGetCli {
+    param([string[]]$Arguments)
+    Write-Log ('winget ' + ($Arguments -join ' '))
+    $result = Invoke-WinGetProcess -Path $script:WinGetPath -Arguments $Arguments
+    Write-Log $result.Text.Trim()
+    Write-Log "WinGet exit: $($result.Code) ($($result.Hex))"
+    return $result
 }
 
 function Get-CliDataLines {
@@ -160,12 +280,12 @@ function Get-CliUpgradeRows {
     param([string]$Id)
     # Include unknown/pinned in the report so they aren't silently called current.
     # These flags are NOT passed to the installer/upgrade operation.
-    $result = Invoke-WinGetCli -Arguments @('list', '--id', $Id, '--exact', '--source', $sourceName, '--scope', 'machine', '--upgrade-available', '--include-unknown', '--include-pinned', '--accept-source-agreements', '--disable-interactivity')
+    $result = Invoke-WinGetCli -Arguments @('list', '--id', $Id, '--exact', '--source', $sourceName, '--scope', $Scope, '--upgrade-available', '--include-unknown', '--include-pinned', '--accept-source-agreements', '--disable-interactivity')
     if ($result.Hex -in @('0x8A150014', '0x8A15002B')) { return }
     if ($result.Code -ne 0) { throw "Upgrade query failed: $($result.Hex)" }
     $rows = @(Get-CliReaderRow -Text $result.Text -Id $Id)
     if ($rows.Count -eq 0 -and @((Get-CliDataLines -Text $result.Text) | Where-Object { $_ -match '^Adobe\b' }).Count -gt 0) {
-        throw 'Upgrade table is unrecognized or truncated. Use Engine Module to avoid table parsing.'
+        throw 'Upgrade table is unrecognized or truncated. Inspect the logged output; no upgrade decision was made.'
     }
     $rows
 }
@@ -178,14 +298,12 @@ function Assert-KnownReaderVersion {
 }
 
 function Invoke-CliWorkflow {
-    $command = Get-Command -Name winget.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1
-    $script:WinGetPath = $command.Source
     $refresh = Invoke-WinGetCli -Arguments @('source', 'update', '--name', $sourceName, '--disable-interactivity')
     if ($refresh.Code -ne 0) { throw "WinGet source refresh failed: $($refresh.Hex)" }
 
     # Also inspect broad inventory for Reader entries which cannot be correlated
     # to the two allowed IDs, instead of reporting those as Reader absent.
-    $inventory = Invoke-WinGetCli -Arguments @('list', '--query', 'Adobe', '--source', $sourceName, '--scope', 'machine', '--accept-source-agreements', '--disable-interactivity')
+    $inventory = Invoke-WinGetCli -Arguments @('list', '--query', 'Adobe', '--source', $sourceName, '--scope', $Scope, '--accept-source-agreements', '--disable-interactivity')
     if ($inventory.Code -ne 0 -and $inventory.Hex -ne '0x8A150014') { throw "Inventory failed: $($inventory.Hex)" }
     if ($inventory.Code -eq 0) {
         foreach ($line in @(Get-CliDataLines -Text $inventory.Text)) {
@@ -204,12 +322,12 @@ function Invoke-CliWorkflow {
     $foundCount = 0
     foreach ($id in $readerIds) {
         try {
-            $queryArgs = @('list', '--id', $id, '--exact', '--source', $sourceName, '--scope', 'machine', '--accept-source-agreements', '--disable-interactivity')
+            $queryArgs = @('list', '--id', $id, '--exact', '--source', $sourceName, '--scope', $Scope, '--accept-source-agreements', '--disable-interactivity')
             $installed = Invoke-WinGetCli -Arguments $queryArgs
             if ($installed.Hex -eq '0x8A150014') { continue }
             if ($installed.Code -ne 0) { throw "Installed query failed: $($installed.Hex)" }
             $rows = @(Get-CliReaderRow -Text $installed.Text -Id $id)
-            if ($rows.Count -ne 1) { throw 'Expected one exact installed match; table may be ambiguous/truncated. Use Engine Module.' }
+            if ($rows.Count -ne 1) { throw 'Expected one exact installed match; inspect the log for an ambiguous/truncated table.' }
             $foundCount++
             Assert-KnownReaderVersion -Version $rows[0].InstalledVersion
             Write-Log "Installed: $id $($rows[0].InstalledVersion)"
@@ -219,7 +337,7 @@ function Invoke-CliWorkflow {
             Write-Log ('Upgrade candidate: ' + $updates[0].Row)
             if ($CheckOnly) { Write-Log 'CheckOnly: update not installed.'; continue }
 
-            $upgrade = Invoke-WinGetCli -Arguments @('upgrade', '--id', $id, '--exact', '--source', $sourceName, '--scope', 'machine', '--silent', '--accept-source-agreements', '--accept-package-agreements', '--disable-interactivity')
+            $upgrade = Invoke-WinGetCli -Arguments @('upgrade', '--id', $id, '--exact', '--source', $sourceName, '--scope', $Scope, '--silent', '--accept-source-agreements', '--accept-package-agreements', '--disable-interactivity')
             if ($upgrade.Hex -eq '0x8A150109' -or $upgrade.Code -eq 3010) {
                 $script:NeedsReboot = $true
                 Write-Log "$id : reboot required to finish. Verify after reboot."
@@ -236,55 +354,7 @@ function Invoke-CliWorkflow {
         }
         catch { Write-Failure "$id : $($_.Exception.Message)" }
     }
-    if ($foundCount -eq 0 -and $script:Failures -eq 0) { Write-Log 'Reader absent from the queried machine inventory. Nothing installed.' }
-}
-
-function Invoke-ModuleWorkflow {
-    if (-not (Get-Module -ListAvailable -Name Microsoft.WinGet.Client)) {
-        throw 'Microsoft.WinGet.Client is missing. Provision it in AllUsers scope before SYSTEM deployment.'
-    }
-    Import-Module Microsoft.WinGet.Client -ErrorAction Stop
-    $inventory = @(Get-WinGetPackage -Query 'Adobe' -Source $sourceName -ErrorAction Stop)
-    foreach ($package in $inventory) {
-        if ($package.Id -notin $readerIds -and (Test-ReaderCandidate -Name $package.Name)) {
-            Write-Failure "Unmapped Reader/ambiguous Acrobat: $($package.Name), ID=$($package.Id). No install attempted for this entry."
-        }
-    }
-    $foundCount = 0
-    foreach ($id in $readerIds) {
-        try {
-            $query = @{ Id = $id; Source = $sourceName; MatchOption = 'Equals'; ErrorAction = 'Stop' }
-            $installedPackages = @(Get-WinGetPackage @query)
-            if ($installedPackages.Count -eq 0) { continue }
-            if ($installedPackages.Count -ne 1) { throw 'Multiple installed matches; no installer started.' }
-            $foundCount++
-            $package = $installedPackages[0]
-            Assert-KnownReaderVersion -Version $package.InstalledVersion
-            if (@($package.AvailableVersions).Count -eq 0) { throw 'No catalog versions available; current version cannot be checked.' }
-            Write-Log "Installed: $id $($package.InstalledVersion); update offered=$($package.IsUpdateAvailable)"
-            if (-not $package.IsUpdateAvailable) { Write-Log "$id : no newer update offered by WinGet."; continue }
-            if ($CheckOnly) { Write-Log 'CheckOnly: update not installed.'; continue }
-            $results = @(Update-WinGetPackage -PSCatalogPackage $package -Scope System -Mode Silent -Confirm:$false -ErrorAction Stop)
-            if ($results.Count -ne 1) { throw 'Unexpected number of update results.' }
-            $result = $results[0]
-            Write-Log "Update status=$($result.Status); installer=$($result.InstallerErrorCode); extended=$($result.ExtendedErrorCode); reboot=$($result.RebootRequired)"
-            $extendedHex = if ($null -ne $result.ExtendedErrorCode) { Get-ExitHex -Code $result.ExtendedErrorCode.HResult } else { '0x00000000' }
-            if ($extendedHex -eq '0x8A150109' -or ([string]$result.Status -eq 'Ok' -and $result.RebootRequired)) {
-                $script:NeedsReboot = $true
-                Write-Log "$id : reboot required to finish. Verify after reboot."
-                continue
-            }
-            # ErrorAction Stop alone does not cover failure statuses in results.
-            if ([string]$result.Status -notin @('Ok', 'NoApplicableUpgrade')) { throw "Update result was $($result.Status)." }
-            $after = @(Get-WinGetPackage @query)
-            if ($after.Count -ne 1) { throw 'Reader could not be matched after upgrade.' }
-            Assert-KnownReaderVersion -Version $after[0].InstalledVersion
-            if (@($after[0].AvailableVersions).Count -eq 0 -or $after[0].IsUpdateAvailable) { throw 'Could not verify that no newer update is offered after upgrade.' }
-            Write-Log "Verified: $id $($after[0].InstalledVersion); no newer update offered."
-        }
-        catch { Write-Failure "$id : $($_.Exception.Message)" }
-    }
-    if ($foundCount -eq 0 -and $script:Failures -eq 0) { Write-Log 'Reader absent from the queried WinGet inventory. Nothing installed.' }
+    if ($foundCount -eq 0 -and $script:Failures -eq 0) { Write-Log "Reader absent from the queried $Scope inventory. Nothing installed." }
 }
 
 try {
@@ -292,15 +362,18 @@ try {
     if ([Environment]::Is64BitOperatingSystem -and -not [Environment]::Is64BitProcess) { throw 'Use the native 64-bit PowerShell host.' }
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
-    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'Run elevated or as SYSTEM.' }
+    $isElevated = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     $isSystem = $identity.User.Value -eq 'S-1-5-18'
-    if ($Engine -eq 'Auto') { $Engine = if ($isSystem) { 'Module' } else { 'CLI' } }
-    if ($isSystem -and $Engine -eq 'CLI') { throw 'WinGet CLI is unsupported under SYSTEM. Use Engine Module.' }
-    $logDirectory = Join-Path $env:ProgramData 'AdobeReaderWinGet'
+    if ($Scope -eq 'machine' -and -not $isElevated -and -not $CheckOnly) { throw 'Machine-scope updates require elevation or SYSTEM.' }
+    if ($isSystem -and $Scope -eq 'user') { throw 'User scope requires running as that user. A resolved path does not switch execution accounts.' }
+    $Engine = 'CLI'
+    $logRoot = if ($isElevated) { $env:ProgramData } else { $env:LOCALAPPDATA }
+    $logDirectory = Join-Path $logRoot 'AdobeReaderWinGet'
     New-Item -Path $logDirectory -ItemType Directory -Force | Out-Null
     $script:LogFile = Join-Path $logDirectory 'Update-AdobeReaderWithWinGet.log'
-    Write-Log "Begin v1.0.0; engine=$Engine; SYSTEM=$isSystem; CheckOnly=$CheckOnly"
-    if ($Engine -eq 'CLI') { Invoke-CliWorkflow } else { Invoke-ModuleWorkflow }
+    Write-Log "Begin v1.1.0; engine=$Engine; SYSTEM=$isSystem; scope=$Scope; CheckOnly=$CheckOnly"
+    $script:WinGetPath = Resolve-WinGetPath -IsSystem $isSystem -IsElevated $isElevated
+    Invoke-CliWorkflow
     Write-Log "Finished; failures=$script:Failures; reboot needed=$script:NeedsReboot"
     if ($script:Failures -gt 0) { exit 1 }
     if ($script:NeedsReboot) { exit 3010 }
