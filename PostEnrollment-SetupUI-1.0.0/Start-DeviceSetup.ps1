@@ -380,21 +380,13 @@ try {
     }
 
     [xml]$xaml = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'UI/MainWindow.xaml') -Raw -Encoding UTF8
+    Set-SetupXamlTheme -Xaml $xaml -Appearance $script:config.Appearance
     $reader = New-Object Xml.XmlNodeReader($xaml)
     try { $script:window = [Windows.Markup.XamlReader]::Load($reader) } finally { $reader.Close() }
     foreach ($name in @('BannerContainer','BannerImage','LogoImage','CompanyLabel','DemoBadge','WelcomeHeading','WelcomeMessage','OverallHeading','ProgressCount','OverallProgress','OverallMessage','StepList','StepScroll','RebootMessage','FooterText','SupportText','ElapsedText','RetryButton','CloseButton','DiagnosticsExpander','DiagnosticText','CopyButton')) {
         $script:ui[$name] = $script:window.FindName($name)
         if ($null -eq $script:ui[$name]) { throw "Missing UI element: $name" }
     }
-    $palette = @{}
-    if ($script:config.Appearance.Theme -eq 'Dark') {
-        $palette = @{ CanvasBrush='#151C29'; CardBrush='#1E293B'; TextBrush='#F1F5F9'; MutedBrush='#ACBAD0'; BorderBrush='#35435A'; SubtleBrush='#263349'; AccentSoftBrush='#243A61' }
-    }
-    $palette.AccentBrush = $script:config.Appearance.AccentColor
-    $palette.SuccessBrush = $script:config.Appearance.SuccessColor
-    $palette.FailureBrush = $script:config.Appearance.FailureColor
-    $palette.WarningBrush = $script:config.Appearance.WarningColor
-    foreach ($key in $palette.Keys) { $script:window.Resources[$key] = New-Object Windows.Media.SolidColorBrush([Windows.Media.ColorConverter]::ConvertFromString($palette[$key])) }
     $script:window.Title = $script:config.Branding.WindowTitle
     $script:window.FontFamily = New-Object Windows.Media.FontFamily($script:config.Appearance.FontFamily)
     $script:window.Topmost = $script:config.Appearance.Topmost
