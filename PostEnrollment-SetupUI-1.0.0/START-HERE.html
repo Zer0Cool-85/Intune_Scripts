@@ -1,0 +1,1000 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Post-enrollment Setup UI | Guide</title><style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f3f6fa;color:#17243b;font:15px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}header{padding:40px 48px;background:#14243e;color:#fff}header small{color:#9cbcff;letter-spacing:2px;font-weight:700}header h1{font-size:36px;margin:8px 0 5px}header p{color:#c5d2e4;margin:0}.shell{max-width:1440px;margin:auto;display:grid;grid-template-columns:210px minmax(0,1fr);gap:34px;padding:30px}nav{position:sticky;top:25px;align-self:start;display:flex;flex-direction:column;gap:8px}nav a{padding:9px 12px;color:#385171;text-decoration:none;font-weight:600;border-radius:8px}nav a:hover{background:#e4ecfa;color:#245edb}main{min-width:0}section{background:white;border:1px solid #e0e7f0;padding:30px 36px;margin-bottom:25px;border-radius:14px;scroll-margin-top:20px}h1{font-size:28px;line-height:1.2}h2{font-size:21px;margin-top:32px}h3{font-size:17px}a{color:#245edb}table{border-collapse:collapse;width:100%;font-size:13px;display:block;overflow-x:auto}th,td{padding:10px 12px;border-bottom:1px solid #e1e7ef;text-align:left;vertical-align:top}th{background:#edf3fc;font-weight:650}td:first-child{min-width:140px}pre{padding:18px;background:#15243c;color:#e2edff;border-radius:9px;overflow:auto;font-size:12px;line-height:1.65}pre code{background:transparent;padding:0;color:inherit}code{font-family:Consolas,ui-monospace,monospace;background:#edf2f9;border-radius:4px;padding:2px 4px;font-size:.9em;overflow-wrap:anywhere}li{margin:6px 0}.notice{background:#edf3ff;border-left:4px solid #2563eb;padding:12px 18px;border-radius:7px;margin:18px 0}img{max-width:100%}@media(max-width:850px){.shell{display:block;padding:16px}nav{position:static;flex-direction:row;flex-wrap:wrap;margin-bottom:18px}section{padding:22px}header{padding:28px}}@media print{nav{display:none}.shell{display:block;padding:0}header{background:white;color:black;padding:20px}section{border:none;padding:10px;break-before:page}pre{white-space:pre-wrap;color:black;background:#eee}a{color:inherit;text-decoration:none}}</style></head><body><header><small>IMPLEMENTATION GUIDE · VERSION 1.0.0</small><h1>A better welcome to a new PC.</h1><p>Brand the window. Define your steps. Keep your existing ServiceUI workflow.</p></header><div class="shell"><nav><a href="#start">Start here</a><a href="#config">Configuration</a><a href="#steps">Writing steps</a><a href="#deployment">Deployment</a><a href="#testing">Testing</a><a href="Docs/Design-Preview.html">Design reference ↗</a></nav><main><section id="start"><h1>Post-enrollment Setup UI</h1>
+
+<p><strong>Version 1.0.0 · Windows PowerShell 5.1 · WPF · Your existing SYSTEM + ServiceUI launch</strong></p>
+
+<p>A configurable, Fluent-inspired first-desktop setup window. Keep your current post-enrollment trigger and replace the popup with this front end. Add your PowerShell code to individual step files; the window handles progress, animation, status, and results.</p>
+
+<h2>Start here</h2>
+
+<ol>
+<li>Extract the entire ZIP to a local folder on a Windows test PC.</li>
+<li>Double-click <strong>Run-Demo.cmd</strong>. No administrator rights are needed for the demo.</li>
+<li>Watch the third step fail intentionally and the dependent fourth step become skipped. Expand its technical details, then choose <strong>Retry unfinished</strong>. The retry succeeds.</li>
+<li>Edit <strong>Config/Setup.json</strong> to change your company name, welcome text, theme, logo/banner paths, and step labels.</li>
+<li>Put your actual commands in <strong>Steps/Step-01.ps1</strong> through <strong>Step-10.ps1</strong>. Remove the placeholder <code>throw</code> in each step you implement.</li>
+<li>Disable unused entries with <code>"Enabled": false</code>. Reorder the JSON objects to change execution order.</li>
+<li>Run <strong>Validate-Config.cmd</strong>, then the Windows smoke tests in <strong>Tests/Invoke-SmokeTests.ps1</strong>.</li>
+<li>Pilot live execution using your existing SYSTEM + ServiceUI workflow with <strong>-Live</strong>. See <a href="#deployment">deployment instructions</a>.</li>
+</ol>
+
+<p><strong>Safe by default:</strong> launching Start-DeviceSetup.ps1 with no mode switch runs a simulation. Only <strong>-Live</strong> executes your step scripts. All ten supplied step scripts deliberately fail in live mode until you replace their placeholders. Demo mode never calls those scripts.</p>
+
+<h2>What is included</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Feature</th>
+  <th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1-10 steps</td>
+  <td>Independent title, description, script, parameters, time limit, dependencies, and success codes</td>
+</tr>
+<tr>
+  <td>Modern appearance</td>
+  <td>Light/dark presets, rounded cards, accent color, readable typography, and status badges</td>
+</tr>
+<tr>
+  <td>Branding</td>
+  <td>Company name, welcome heading/message, optional logo, optional full-width banner, or both</td>
+</tr>
+<tr>
+  <td>Animated status</td>
+  <td>Spinning current-step indicator; completed checkmarks, failure crosses, and skipped markers</td>
+</tr>
+<tr>
+  <td>Progress</td>
+  <td>Overall steps-finished bar; optional per-step percentage and live message</td>
+</tr>
+<tr>
+  <td>Details</td>
+  <td>Expandable errors, elapsed times, run logs, and a copy-details button</td>
+</tr>
+<tr>
+  <td>Retry</td>
+  <td>Retry failed/skipped steps; leave successful steps alone</td>
+</tr>
+<tr>
+  <td>Resume</td>
+  <td>Remember successful steps per device, package ID, version, and execution fingerprint</td>
+</tr>
+<tr>
+  <td>Reliability</td>
+  <td>Separate worker process, responsive UI, time limits, duplicate-run prevention, and JSON results</td>
+</tr>
+<tr>
+  <td>Reboot reporting</td>
+  <td>Preserve reboot-required success as exit 3010; never initiate a reboot</td>
+</tr>
+</tbody>
+</table>
+
+<p>This is custom WPF styled to resemble modern Windows. It is <strong>not WinUI 3 or PSADT</strong>, and it has no additional UI framework dependency.</p>
+
+<h2>Files you will usually edit</h2>
+
+<table>
+<thead>
+<tr>
+  <th>File</th>
+  <th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Config/Setup.json</td>
+  <td>Main configuration; starts with 5 enabled and 5 disabled steps</td>
+</tr>
+<tr>
+  <td>Steps/Step-01.ps1 ... Step-10.ps1</td>
+  <td>Your actual installation/configuration code</td>
+</tr>
+<tr>
+  <td>Assets/</td>
+  <td>Your PNG/JPG/BMP branding files</td>
+</tr>
+<tr>
+  <td>UI/MainWindow.xaml</td>
+  <td>Optional advanced layout/style changes</td>
+</tr>
+<tr>
+  <td>Run-Live-ServiceUI.cmd</td>
+  <td>Optional convenience launcher; customize your existing launcher instead if preferred</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Documentation</h2>
+
+<ul>
+<li><a href="#config">Configuration reference</a>: all settings and branding examples.</li>
+<li><a href="#steps">Writing steps</a>: success/failure rules, progress, parameters, installer examples.</li>
+<li><a href="#deployment">Deployment and first-logon integration</a>: ServiceUI, SYSTEM, Intune staging, state, and exit codes.</li>
+<li><a href="#testing">Testing and troubleshooting</a>: validation status, Windows checks, and common issues.</li>
+<li><a href="Docs/Design-Preview.html">Design preview</a>: HTML visual reference, <strong>not a Windows runtime screenshot</strong>.</li>
+<li><strong>START-HERE.html</strong>: offline, formatted copy of this documentation.</li>
+</ul>
+
+<h2>Quick commands</h2>
+
+<p>From an extracted package folder in Windows PowerShell:</p>
+
+<pre><code># Safe simulation; no step scripts run.
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Start-DeviceSetup.ps1 -Demo
+
+# Dark theme example.
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Start-DeviceSetup.ps1 -Demo -ConfigPath .\Config\Dark-Demo.json
+
+# All 10 steps enabled, to inspect the scrolling layout.
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Start-DeviceSetup.ps1 -Demo -ConfigPath .\Config\All10-Demo.json
+
+# Configuration-only check; no UI or steps.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Start-DeviceSetup.ps1 -ValidateOnly
+
+# Windows tests; no app installs or ServiceUI invocation.
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Tests\Invoke-SmokeTests.ps1
+</code></pre>
+
+<p>The demo/config-check CMD launchers choose Sysnative when called from a 32-bit process. The live wrapper instead expects x64 ServiceUI, which launches 64-bit PowerShell through System32.</p>
+
+<h2>Scope and compatibility</h2>
+
+<ul>
+<li>Target: Windows 10/11 x64 with Windows PowerShell 5.1 and the Windows WPF/.NET Framework components.</li>
+<li>The UI requires an STA session. PowerShell 7 is intentionally rejected for the UI to keep one supported host/runtime target.</li>
+<li>Your ServiceUI launcher, first-logon scheduling, and enrollment/ESP readiness checks remain your responsibility.</li>
+<li>This is <strong>device-level</strong> completion tracking. HKCU, APPDATA, and USERPROFILE refer to SYSTEM in a SYSTEM-run step, not the signed-in user.</li>
+<li>ServiceUI.exe and application installers are not included.</li>
+<li>No network calls, telemetry, package downloads, or built-in application changes are performed by the framework. Your live step scripts determine those actions.</li>
+</ul>
+
+<h2>Verification status</h2>
+
+<p>Source parsing, configuration checks, XAML/XML structure, resource/element references, package links, and the HTML design reference are checked in the build environment. That environment is Linux, so <strong>Windows PowerShell execution, WPF rendering, ServiceUI session presentation, and real installers have not been run here</strong>. The included Windows smoke tests and pilot checklist cover those remaining checks.</p>
+</section><section id="config"><h1>Configuration reference</h1>
+
+<p>Edit <code>Config/Setup.json</code> with a text editor. JSON requires double quotes, lowercase <code>true</code>/<code>false</code>, and no comments or trailing commas. Forward slashes in paths work on Windows and avoid JSON backslash escaping. Run <code>Validate-Config.cmd</code> after editing.</p>
+
+<p>All listed keys are present in the examples. Keep them unless you modify the validator as well. Unknown fields are not a supported extension mechanism. There can be <strong>1-10 total step entries</strong>, with at least one enabled. To add your own step, edit an existing disabled slot or replace the list with your own entries.</p>
+
+<h2>Identity</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Setting</th>
+  <th>Default</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>SchemaVersion</code></td>
+  <td><code>1</code></td>
+  <td>Keep at 1 for this package format.</td>
+</tr>
+<tr>
+  <td><code>SetupId</code></td>
+  <td><code>"Company.DeviceSetup"</code></td>
+  <td>Stable package identity and state/mutex namespace. Letters, digits, dot, underscore, and hyphen; 1-80 characters.</td>
+</tr>
+<tr>
+  <td><code>SetupVersion</code></td>
+  <td><code>"1.0.0"</code></td>
+  <td>Change when you intentionally want a new setup revision. 1-40 safe characters.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Branding</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Setting</th>
+  <th>Default</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>CompanyName</code></td>
+  <td><code>"YOUR COMPANY"</code></td>
+  <td>Displayed next to the optional logo; an empty string hides the company text.</td>
+</tr>
+<tr>
+  <td><code>WindowTitle</code></td>
+  <td><code>"Welcome | Device setup"</code></td>
+  <td>Native Windows title bar text.</td>
+</tr>
+<tr>
+  <td><code>Heading</code></td>
+  <td><code>"Welcome to your new PC"</code></td>
+  <td>Large welcome heading.</td>
+</tr>
+<tr>
+  <td><code>Message</code></td>
+  <td><code>"Please wait while we finish device setup. We are preparing your applications, access, and preferences."</code></td>
+  <td>Welcome text beneath the heading. Wraps automatically; keep it to a short paragraph.</td>
+</tr>
+<tr>
+  <td><code>LogoPath</code></td>
+  <td><code>""</code></td>
+  <td>Relative PNG/JPG/BMP path, e.g. Assets/company-logo.png. Empty hides the logo.</td>
+</tr>
+<tr>
+  <td><code>BannerPath</code></td>
+  <td><code>""</code></td>
+  <td>Relative PNG/JPG/BMP path. Empty hides the full-width banner.</td>
+</tr>
+<tr>
+  <td><code>BannerHeight</code></td>
+  <td><code>110</code></td>
+  <td>Banner region height in WPF device-independent units; 40-240. Image fills/crops the region.</td>
+</tr>
+<tr>
+  <td><code>LogoMaxWidth</code></td>
+  <td><code>180</code></td>
+  <td>Maximum logo width; 24-400. Aspect ratio is preserved.</td>
+</tr>
+<tr>
+  <td><code>LogoMaxHeight</code></td>
+  <td><code>48</code></td>
+  <td>Maximum logo height; 24-120. Aspect ratio is preserved.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Appearance</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Setting</th>
+  <th>Default</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Theme</code></td>
+  <td><code>"Light"</code></td>
+  <td>Light or Dark. The Dark-Demo.json example includes brighter accent/status colors for dark backgrounds.</td>
+</tr>
+<tr>
+  <td><code>AccentColor</code></td>
+  <td><code>"#2563EB"</code></td>
+  <td>Primary buttons, current-step spinner/border, and progress. Hex #RRGGBB.</td>
+</tr>
+<tr>
+  <td><code>SuccessColor</code></td>
+  <td><code>"#16815D"</code></td>
+  <td>Success status/checkmarks. Hex #RRGGBB.</td>
+</tr>
+<tr>
+  <td><code>FailureColor</code></td>
+  <td><code>"#C53F4E"</code></td>
+  <td>Failure status/crosses. Hex #RRGGBB.</td>
+</tr>
+<tr>
+  <td><code>WarningColor</code></td>
+  <td><code>"#A86D0B"</code></td>
+  <td>Warnings and restart reminder. Hex #RRGGBB.</td>
+</tr>
+<tr>
+  <td><code>WindowWidth</code></td>
+  <td><code>900</code></td>
+  <td>Preferred width; 640-1600. Clamped to available desktop work area.</td>
+</tr>
+<tr>
+  <td><code>WindowHeight</code></td>
+  <td><code>820</code></td>
+  <td>Preferred height; 520-1200. Clamped to available desktop work area; step list scrolls.</td>
+</tr>
+<tr>
+  <td><code>Topmost</code></td>
+  <td><code>true</code></td>
+  <td>Keep the window above ordinary application windows.</td>
+</tr>
+<tr>
+  <td><code>ReduceMotion</code></td>
+  <td><code>false</code></td>
+  <td>Disable spinner rotation. The Running state and progress remain visible.</td>
+</tr>
+<tr>
+  <td><code>ShowElapsedTime</code></td>
+  <td><code>true</code></td>
+  <td>Show total elapsed time and per-step duration.</td>
+</tr>
+<tr>
+  <td><code>ShowStepNumbers</code></td>
+  <td><code>true</code></td>
+  <td>Show numbers in pending-step circles.</td>
+</tr>
+<tr>
+  <td><code>FontFamily</code></td>
+  <td><code>"Segoe UI"</code></td>
+  <td>Installed Windows font family. Segoe UI is the default.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Text</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Setting</th>
+  <th>Default</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>RunningHeading</code></td>
+  <td><code>"Getting things ready"</code></td>
+  <td>Status-panel heading while steps run.</td>
+</tr>
+<tr>
+  <td><code>RunningMessage</code></td>
+  <td><code>"Your settings and applications are being prepared."</code></td>
+  <td>Status-panel supporting text while steps run.</td>
+</tr>
+<tr>
+  <td><code>SuccessHeading</code></td>
+  <td><code>"Your PC is ready"</code></td>
+  <td>Status-panel heading after all steps succeed.</td>
+</tr>
+<tr>
+  <td><code>SuccessMessage</code></td>
+  <td><code>"All setup steps have finished. You can start using your device."</code></td>
+  <td>Status-panel supporting text after all steps succeed.</td>
+</tr>
+<tr>
+  <td><code>WarningHeading</code></td>
+  <td><code>"Ready, with a few things to review"</code></td>
+  <td>Heading when required steps succeeded but optional work failed/skipped.</td>
+</tr>
+<tr>
+  <td><code>WarningMessage</code></td>
+  <td><code>"Required setup is complete. An optional step needs attention."</code></td>
+  <td>Supporting text for that optional-issue outcome.</td>
+</tr>
+<tr>
+  <td><code>FailureHeading</code></td>
+  <td><code>"A few things need attention"</code></td>
+  <td>Heading when required work failed/skipped.</td>
+</tr>
+<tr>
+  <td><code>FailureMessage</code></td>
+  <td><code>"Review the highlighted steps, then retry or contact your IT service desk."</code></td>
+  <td>Supporting text after failure.</td>
+</tr>
+<tr>
+  <td><code>Footer</code></td>
+  <td><code>"Keep your device plugged in and connected."</code></td>
+  <td>Short instruction at the bottom of the window.</td>
+</tr>
+<tr>
+  <td><code>Support</code></td>
+  <td><code>"Need help? Contact your IT service desk."</code></td>
+  <td>Plain-text help/contact information. Does not launch an email client or browser.</td>
+</tr>
+<tr>
+  <td><code>RetryButton</code></td>
+  <td><code>"Retry unfinished"</code></td>
+  <td>Label for retrying failed/skipped steps.</td>
+</tr>
+<tr>
+  <td><code>CloseButton</code></td>
+  <td><code>"Done"</code></td>
+  <td>Result-screen close button label.</td>
+</tr>
+<tr>
+  <td><code>CopyButton</code></td>
+  <td><code>"Copy details"</code></td>
+  <td>Copy-diagnostics button label.</td>
+</tr>
+<tr>
+  <td><code>DetailsLabel</code></td>
+  <td><code>"Setup details"</code></td>
+  <td>Footer diagnostics expander label.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Behavior</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Setting</th>
+  <th>Default</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>RequireSystemForLive</code></td>
+  <td><code>true</code></td>
+  <td>Default true. Live mode requires SID S-1-5-18. For a controlled local admin pilot you may set false in a separate config; this does not elevate the process.</td>
+</tr>
+<tr>
+  <td><code>ResumeCompletedSteps</code></td>
+  <td><code>true</code></td>
+  <td>Remember successful steps and skip matching work on later live runs.</td>
+</tr>
+<tr>
+  <td><code>StopOnRequiredFailure</code></td>
+  <td><code>false</code></td>
+  <td>True skips all remaining steps after a required failure. False continues independent work. Dependencies are always respected.</td>
+</tr>
+<tr>
+  <td><code>AllowRetry</code></td>
+  <td><code>true</code></td>
+  <td>Show Retry unfinished for failures/skips. Timeout/controller faults disable retry regardless of this value.</td>
+</tr>
+<tr>
+  <td><code>AutoCloseSuccessSeconds</code></td>
+  <td><code>0</code></td>
+  <td>0 leaves the results open. Otherwise closes 1-3600 seconds after full success; does not auto-close warnings/failures.</td>
+</tr>
+<tr>
+  <td><code>PollIntervalMilliseconds</code></td>
+  <td><code>400</code></td>
+  <td>UI update interval, 200-2000 ms. Spinner animation uses WPF animation independently.</td>
+</tr>
+<tr>
+  <td><code>StateDirectory</code></td>
+  <td><code>"%ProgramData%/Company/PostEnrollmentSetupUI"</code></td>
+  <td>Absolute local directory after environment-variable expansion. SetupId is appended. Default uses ProgramData; do not use a network path.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Each step</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Setting</th>
+  <th>Example</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Id</code></td>
+  <td><code>"step01"</code></td>
+  <td>Stable unique identifier; 1-40 letters/digits/underscores/hyphens. Also used in log filenames and DependsOn.</td>
+</tr>
+<tr>
+  <td><code>Enabled</code></td>
+  <td><code>true</code></td>
+  <td>False omits the entry entirely. At least one step must be enabled.</td>
+</tr>
+<tr>
+  <td><code>Title</code></td>
+  <td><code>"Device readiness"</code></td>
+  <td>Main card label.</td>
+</tr>
+<tr>
+  <td><code>Description</code></td>
+  <td><code>"Check that the device is ready for final setup."</code></td>
+  <td>Short supporting explanation. Optional steps automatically add an Optional suffix.</td>
+</tr>
+<tr>
+  <td><code>Script</code></td>
+  <td><code>"Steps/Step-01.ps1"</code></td>
+  <td>Package-relative .ps1 path; must exist for enabled steps.</td>
+</tr>
+<tr>
+  <td><code>Parameters</code></td>
+  <td><code>{}</code></td>
+  <td>JSON object of named PowerShell parameters supplied to the script.</td>
+</tr>
+<tr>
+  <td><code>TimeoutSeconds</code></td>
+  <td><code>1200</code></td>
+  <td>Whole-step execution limit, 1-86400 seconds. Includes child installer waits.</td>
+</tr>
+<tr>
+  <td><code>SuccessExitCodes</code></td>
+  <td><code>[0, 3010]</code></td>
+  <td>Final worker exit codes considered successful. Default 0 and 3010.</td>
+</tr>
+<tr>
+  <td><code>RebootExitCodes</code></td>
+  <td><code>[3010]</code></td>
+  <td>Successful codes indicating a reboot is required. Must also be listed in SuccessExitCodes.</td>
+</tr>
+<tr>
+  <td><code>Required</code></td>
+  <td><code>true</code></td>
+  <td>False makes this step optional for the overall exit status. It can still fail visibly.</td>
+</tr>
+<tr>
+  <td><code>DependsOn</code></td>
+  <td><code>[]</code></td>
+  <td>Array of earlier enabled step IDs that must complete successfully before this step runs.</td>
+</tr>
+<tr>
+  <td><code>DemoSeconds</code></td>
+  <td><code>4</code></td>
+  <td>Simulated step duration, 1-60 seconds. Ignored in live mode.</td>
+</tr>
+<tr>
+  <td><code>DemoFailFirstAttempt</code></td>
+  <td><code>false</code></td>
+  <td>Intentionally fail this demo step on its first attempt, then pass on retry. Ignored in live mode.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Common customizations</h2>
+
+<h3>Company branding</h3>
+
+<pre><code>"Branding": {
+  "CompanyName": "Your Company",
+  "WindowTitle": "Your Company | Device setup",
+  "Heading": "Welcome to your new PC",
+  "Message": "Please wait while we finish device setup.",
+  "LogoPath": "Assets/company-logo.png",
+  "BannerPath": "Assets/company-banner.jpg",
+  "BannerHeight": 110,
+  "LogoMaxWidth": 180,
+  "LogoMaxHeight": 48
+}
+</code></pre>
+
+<p>The file paths above require your actual image files. Leave either path empty when you do not want that image. See <code>Assets/README.md</code> for sizes and cropping behavior.</p>
+
+<h3>Step order and dependencies</h3>
+
+<p>Steps run in their JSON array order, not numeric ID order. Reordering does not require renaming files. A dependency must point to an earlier enabled step. A disabled dependency is a validation error, so remove/change that reference when disabling a prerequisite.</p>
+
+<h3>Advanced visual changes</h3>
+
+<p>Edit <code>UI/MainWindow.xaml</code> for corner radii, card spacing, text sizes, the fixed DEVICE SETUP label, status badge layout, error-expander caption, or other strings outside the config. Edit the named resource brushes for light-theme backgrounds. Dark-theme background brushes are assigned in <code>Start-DeviceSetup.ps1</code>. Keep named controls, resource keys, and binding names intact unless you also update their code references.</p>
+
+<p>The window uses a native Windows frame plus WPF content. Native title-bar appearance follows Windows; selecting the Dark preset changes the content and does not force a dark native frame. The window can be minimized, cannot be maximized, and clamps itself to the desktop work area. Very long text, large banners, or unusually high display scaling may require shorter text or a larger screen.</p>
+
+<h2>Configuration validation</h2>
+
+<p>The bundled PowerShell validator checks required properties, branding files, step IDs/count, boolean flags, ranges, dependency order, relative paths, enabled script existence, and exit-code relationships. <code>Docs/Setup.schema.json</code> also supplies a JSON Schema for editors and external schema validators. It is a reference file, not a runtime network dependency.</p>
+</section><section id="steps"><h1>Writing your setup steps</h1>
+
+<h2>The execution contract</h2>
+
+<p>Each enabled step is executed sequentially in a fresh, hidden <strong>64-bit Windows PowerShell 5.1</strong> process. When the parent is launched as SYSTEM through your ServiceUI workflow, its workers also run as SYSTEM. A step does not share local variables or functions with another step.</p>
+
+<p>The framework starts a transcript, supplies progress/installer helper functions, runs your script, and checks the process exit code. The UI remains on its own thread/process while the worker does the slow work.</p>
+
+<ol>
+<li>Keep <code>$ErrorActionPreference = 'Stop'</code> in your script.</li>
+<li>Detect the existing state before making changes. Steps must be safe to run again after interruption or failure.</li>
+<li>Apply the change.</li>
+<li>Verify the resulting state.</li>
+<li>Return normally for success; <code>throw</code> a useful message for failure.</li>
+</ol>
+
+<p>Returning <code>$false</code>, outputting the word <code>Failed</code>, or using <code>Write-Warning</code> does <strong>not</strong> mark a step failed.</p>
+
+<h2>Minimal example</h2>
+
+<p>Replace a placeholder step with your own code using this pattern:</p>
+
+<pre><code>[CmdletBinding()]
+param()
+$ErrorActionPreference = 'Stop'
+
+Write-SetupProgress -Message 'Applying configuration...' -Percent 10
+
+# Your real PowerShell commands go here.
+
+Write-SetupProgress -Message 'Verifying the result...' -Percent 90
+
+# Example: if your actual detection fails, throw a meaningful error.
+# if (-not (Test-YourResult)) { throw 'The expected setting was not applied.' }
+
+Write-SetupProgress -Message 'Configuration verified.' -Percent 100
+</code></pre>
+
+<p>This is a writing pattern, not a ready-made configuration action. The included <code>Steps/Step-XX.ps1</code> files retain a deliberate <code>throw</code> until you implement them, so an untouched placeholder cannot report success in production.</p>
+
+<h2>Sending progress</h2>
+
+<pre><code>Write-SetupProgress -Message 'Downloading application files...'
+Write-SetupProgress -Message 'Installing the application...' -Percent 45
+Write-SetupProgress -Message 'Validating installation...' -Percent 95
+</code></pre>
+
+<p><code>Message</code> updates the current card's detail line. Omitting <code>Percent</code> hides the per-step percentage bar while the spinner continues. Percentages are estimates you supply; the framework does not read an installer's internal progress. The overall bar weights each configured step equally and measures <strong>finished work</strong>, including failures/skips. Overall text and colors show whether the result succeeded.</p>
+
+<h2>Running installers and preserving exit codes</h2>
+
+<p>Prefer the supplied helper:</p>
+
+<pre><code>$installer = Join-Path $env:SETUP_PACKAGE_ROOT 'Files/AppSetup.exe'
+$null = Invoke-SetupProcess -FilePath $installer -Arguments '/quiet /norestart'
+</code></pre>
+
+<p><code>Invoke-SetupProcess</code> waits for the process tree, accepts 0 and 3010 by default, throws on other codes, and remembers a reboot-required result. Use the vendor's actual silent/no-restart arguments; EXE switches are not standardized.</p>
+
+<p>Override acceptable codes when required:</p>
+
+<pre><code>$null = Invoke-SetupProcess -FilePath $installer -Arguments '/S' -SuccessExitCodes @(0,3010) -RebootExitCodes @(3010)
+</code></pre>
+
+<p>For raw native commands, check the exit code immediately:</p>
+
+<pre><code>&amp; $installer /quiet /norestart
+$installExit = $LASTEXITCODE
+if ($installExit -notin @(0,3010)) { throw "Installer failed: $installExit" }
+if ($installExit -eq 3010) { exit 3010 }
+</code></pre>
+
+<p>A final nonzero <code>$LASTEXITCODE</code> is preserved by the worker when the step returns. An explicit <code>exit N</code> is also honored. Earlier native failures can be overwritten by later native commands, so check each command or use the helper. If you intentionally handle a nonzero code and recover, return an explicit <code>exit 0</code> or reset <code>$global:LASTEXITCODE = 0</code> after verification. The JSON step's <code>SuccessExitCodes</code> controls final acceptance; <code>RebootExitCodes</code> must be a subset of it.</p>
+
+<p>The framework displays a restart reminder and returns 3010 when needed. It does not reboot. Suppress automatic reboots in each installer so they cannot interrupt the checklist unexpectedly.</p>
+
+<h2>Parameters</h2>
+
+<p>In your step script:</p>
+
+<pre><code>[CmdletBinding()]
+param(
+    [Parameter(Mandatory)][string]$MsiRelativePath,
+    [Parameter(Mandatory)][string]$ExpectedFile
+)
+</code></pre>
+
+<p>In that step's JSON entry:</p>
+
+<pre><code>"Script": "Examples/Step-InstallMsi.ps1",
+"Parameters": {
+  "MsiRelativePath": "Files/YourApplication.msi",
+  "ExpectedFile": "C:/Program Files/Vendor/App/App.exe"
+}
+</code></pre>
+
+<p>Parameters are passed as named PowerShell parameters, not evaluated as commands. Boolean JSON values can bind to boolean/switch parameters. Do not place passwords, tokens, or private keys in configuration or progress messages; request files and transcripts retain setup information.</p>
+
+<h2>Environment available to every step</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Variable</th>
+  <th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>SETUP<em>PACKAGE</em>ROOT</td>
+  <td>Absolute directory containing Start-DeviceSetup.ps1</td>
+</tr>
+<tr>
+  <td>SETUP<em>STEP</em>ID</td>
+  <td>Current JSON step ID</td>
+</tr>
+<tr>
+  <td>SETUP<em>RUN</em>DIRECTORY</td>
+  <td>This run's log and diagnostic directory</td>
+</tr>
+<tr>
+  <td>SETUP<em>PROGRESS</em>FILE</td>
+  <td>Internal current-step progress JSON path</td>
+</tr>
+</tbody>
+</table>
+
+<p>Use <code>$env:SETUP_PACKAGE_ROOT</code> to locate shared assets/installers. <code>$PSScriptRoot</code> inside a step refers to that step's own folder. Use the progress helper instead of writing progress JSON yourself.</p>
+
+<h2>Dependencies, failures, and retry</h2>
+
+<ul>
+<li>A step may depend only on <strong>earlier enabled</strong> step IDs.</li>
+<li>A failed/skipped dependency causes the dependent step to be skipped.</li>
+<li>With <code>StopOnRequiredFailure: false</code>, independent later steps can continue.</li>
+<li>With <code>StopOnRequiredFailure: true</code>, a required failure skips all remaining steps.</li>
+<li>Optional failures remain visibly failed but do not make the overall deployment fail if all required steps succeeded.</li>
+<li><strong>Retry unfinished</strong> resets only failed/skipped steps. Successful steps remain completed. Dependencies are checked again.</li>
+<li>There is no unlimited automatic retry loop.</li>
+<li>A timeout always stops the run and disables in-window retry. The framework asks Windows to terminate the worker process tree; a service-owned MSI/custom installer operation may outlive that tree. Inspect device/installer state before restarting the workflow.</li>
+</ul>
+
+<h2>Completion and resume</h2>
+
+<p>With <code>ResumeCompletedSteps: true</code>, a successful step is remembered. Its fingerprint includes its script content, configured parameters, success/reboot codes, and dependency fingerprints. Changing a step or one of its declared dependencies causes affected work to run again. Changing only branding or wording does not.</p>
+
+<p>External installer contents and helper files imported by your script are <strong>not automatically fingerprinted</strong>. Bump <code>SetupVersion</code> when those inputs change and you want steps reconsidered. Detection inside each step remains essential. A saved success is a record of previous execution, not continuous compliance monitoring.</p>
+
+<h2>User-specific settings</h2>
+
+<p>These steps inherit SYSTEM. Reading or writing HKCU or APPDATA accesses the SYSTEM profile. Use your existing intentional user-context mechanism for settings that require the signed-in user; do not assume the visible window changes the worker's identity. This package does not introduce a separate user-context execution engine.</p>
+
+<h2>Examples supplied</h2>
+
+<ul>
+<li><code>Examples/Step-InstallMsi.ps1</code>: local MSI, no-restart install, log, and simple file verification. Replace file-presence detection with version/product detection as appropriate.</li>
+<li><code>Examples/Step-SetMachineSetting.ps1</code>: example machine-registry setting and verification.</li>
+</ul>
+
+<p>Neither example runs unless you explicitly reference it from the JSON configuration and launch <strong>-Live</strong>.</p>
+</section><section id="deployment"><h1>Deployment and your first-logon workflow</h1>
+
+<h2>Keep the current launch approach</h2>
+
+<p>This package intentionally retains your <strong>SYSTEM + ServiceUI</strong> setup. It does not register scheduled tasks, change enrollment policies, replace ESP, or alter your current first-logon trigger.</p>
+
+<p>Stage the complete folder locally before your existing post-enrollment launch runs. The main window launches hidden child processes for the individual steps and polls their status. The window and workers inherit the original SYSTEM identity.</p>
+
+<h2>Direct ServiceUI command</h2>
+
+<p>From your existing SYSTEM process, after the intended user's desktop exists:</p>
+
+<pre><code>ServiceUI.exe -process:explorer.exe C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoProfile -STA -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\Program Files\YourCompany\DeviceSetup\Start-DeviceSetup.ps1" -ConfigPath "C:\Program Files\YourCompany\DeviceSetup\Config\Setup.json" -Live
+</code></pre>
+
+<p>Use your actual Windows/install paths. <code>Run-Live-ServiceUI.cmd</code> uses variable-based Windows paths and expects <strong>x64 ServiceUI.exe</strong>, which resolves System32 to 64-bit PowerShell. Do not pass a Sysnative path to an x64 ServiceUI process. To use it, place your existing x64 ServiceUI.exe in <code>Tools</code>, then invoke the CMD from your SYSTEM deployment mechanism. Double-clicking it as a normal user does not grant SYSTEM privileges; the live-mode identity check will reject that run by default.</p>
+
+<p>The sample targets <code>explorer.exe</code>. Keep your existing session-selection logic if you support RDP, fast user switching, or multiple signed-in sessions. A process-name match is not a robust way to identify the intended employee on a multi-session computer.</p>
+
+<h2>Installation location and permissions</h2>
+
+<p>Use a local protected folder such as <code>C:\Program Files\YourCompany\DeviceSetup</code>. Preserve SYSTEM/Administrators write access and ordinary-user read/execute access. Scripts, XAML, executable files, and JSON control SYSTEM execution and must not be writable by standard users. Do not run the live package from an employee-writable Downloads/Desktop folder.</p>
+
+<p>Use your organization's approved script-signing/application-control approach. The sample commands use <code>ExecutionPolicy Bypass</code> for packaging convenience; this does not bypass WDAC/AppLocker or other enforcement policies.</p>
+
+<p>The UI intentionally has no Open File, Open Log, or browser-launch buttons; diagnostics are displayed as text and can be copied. Users can minimize the window while work runs. Close/Alt+F4 is ignored until the run finishes; this is a workflow behavior, not a kiosk/security boundary.</p>
+
+<h2>Intune integration</h2>
+
+<ol>
+<li>Package your completed folder with your normal Win32 packaging process.</li>
+<li>Use your existing SYSTEM staging/install script to copy it to a protected local folder.</li>
+<li>Detect that <strong>the framework is staged</strong>, using your existing version/file marker.</li>
+<li>Let your existing first-desktop/after-ESP trigger launch the ServiceUI command.</li>
+<li>Retain your completion/cleanup flow or use this package's completion records to avoid repeating successful work.</li>
+</ol>
+
+<p>Do not make an ESP-blocking staging app wait for these desktop-only steps. ESP must be able to finish before the first-desktop launcher can run. The framework's staging detection and the final-setup completion result are separate concerns.</p>
+
+<p>ServiceUI cannot show the popup before the target desktop/session exists. Keep your current enrollment-completion checks; a fixed sleep is not sufficient to identify the end of every provisioning scenario.</p>
+
+<h2>State and log locations</h2>
+
+<p>Default live location:</p>
+
+<pre><code>C:\ProgramData\Company\PostEnrollmentSetupUI\Company.DeviceSetup\
+</code></pre>
+
+<p><code>StateDirectory</code> is the configured parent; <code>SetupId</code> is appended automatically. In SYSTEM live mode, the package subfolder is ACL-protected for SYSTEM and Administrators. The configured parent itself is not re-permissioned.</p>
+
+<table>
+<thead>
+<tr>
+  <th>File/folder</th>
+  <th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Completed-1.0.0.json</td>
+  <td>Success records for that SetupVersion</td>
+</tr>
+<tr>
+  <td>Runs/<timestamp-id>/SetupUI.log</td>
+  <td>Controller status transitions</td>
+</tr>
+<tr>
+  <td>Runs/<timestamp-id>/stepXX-attempt-N.log</td>
+  <td>Per-attempt PowerShell transcript</td>
+</tr>
+<tr>
+  <td>Runs/<timestamp-id>/*.request.json</td>
+  <td>Parameters and paths given to the step worker</td>
+</tr>
+<tr>
+  <td>Runs/<timestamp-id>/*.progress.json</td>
+  <td>Latest live detail/percentage</td>
+</tr>
+<tr>
+  <td>Runs/<timestamp-id>/*.result.json</td>
+  <td>Worker completion/error details</td>
+</tr>
+<tr>
+  <td>Runs/<timestamp-id>/Results.json</td>
+  <td>Overall outcome and per-step results</td>
+</tr>
+</tbody>
+</table>
+
+<p>Demo runs use <code>%LOCALAPPDATA%\PostEnrollmentSetupUI\Demo\Runs</code>. They never update live completion state.</p>
+
+<p>Completed work is skipped on later launches. If every enabled step is already complete with matching fingerprints, live mode exits without displaying a window. Incomplete/failed work is reconsidered on the next invocation. This is once-per-device behavior, not once per employee profile.</p>
+
+<p>Logs are not automatically deleted. Apply your normal endpoint log-retention policy. Never write credentials to messages, parameters, or transcripts.</p>
+
+<h2>Resetting for a controlled retest</h2>
+
+<p>Use <strong>-ResetState -Live</strong> with the same SYSTEM launcher to archive the completion file and reconsider all enabled steps. This can repeat installations/configuration, so use it only when you intend a full retest. It does not uninstall anything. The normal in-window retry leaves successful steps untouched.</p>
+
+<p>For a new intended setup revision, change <code>SetupVersion</code>. Changing only <code>SetupId</code> also creates a separate state namespace, so keep IDs stable unless you intend a new workflow.</p>
+
+<h2>Return codes</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Exit code</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>0</td>
+  <td>All required steps succeeded; optional failures may still be present in Results.json</td>
+</tr>
+<tr>
+  <td>1</td>
+  <td>A required step failed/skipped, or setup encountered a configuration/controller error</td>
+</tr>
+<tr>
+  <td>3010</td>
+  <td>Required work succeeded and a successful step requested reboot; no reboot is initiated</td>
+</tr>
+<tr>
+  <td>1618</td>
+  <td>Another instance of this package is already running</td>
+</tr>
+<tr>
+  <td>2 from CMD wrapper</td>
+  <td>ServiceUI.exe is missing</td>
+</tr>
+</tbody>
+</table>
+
+<p>The default window remains open at the result screen until <strong>Done</strong> is selected; the parent launch does not finish until then. To close automatically after full success, set <code>AutoCloseSuccessSeconds</code>, for example 10. Warnings/failures remain visible. A reboot request is retained across launches until the detected Windows boot time changes.</p>
+
+<h2>Updating the package</h2>
+
+<p>Keep your production scripts/config and review changes before replacing the framework. Retest using the actual ServiceUI command, standard-user desktop, screen scaling, app-control policies, and your intended post-ESP timing. Do not upgrade a package while one of its live steps is running.</p>
+</section><section id="testing"><h1>Testing and troubleshooting</h1>
+
+<h2>What has and has not been tested</h2>
+
+<p>The authoring environment is Linux. Validation here covers PowerShell source syntax with a tree-sitter parser, JSON/schema consistency, package paths/dependencies, XAML XML/resource/name references, documentation links, and the HTML design reference. These are useful static checks, not a substitute for the Windows WPF runtime.</p>
+
+<p><strong>Not executed here:</strong> Windows PowerShell 5.1, WPF XAML loading/rendering, the C# model under .NET Framework, ServiceUI session injection, SYSTEM execution, installer process termination, and actual application installs. No production-readiness or successful deployment claim is implied.</p>
+
+<h2>Windows smoke tests</h2>
+
+<p>From the extracted folder:</p>
+
+<pre><code>powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Tests\Invoke-SmokeTests.ps1
+</code></pre>
+
+<p>The script parses the PowerShell files with Microsoft's actual PowerShell parser, loads all supplied configurations, exercises outcome/dependency logic, compiles the C# view model, loads/measures the WPF layout with ten step models, and runs temporary worker fixtures for success, failure, explicit 3010, helper-based 3010, and progress updates. It does not display the main window, install an app, touch HKLM, or call ServiceUI. Its temporary files are removed afterward.</p>
+
+<h2>Visual pilot</h2>
+
+<ol>
+<li>Run <code>Run-Demo.cmd</code> as a regular user.</li>
+<li>Confirm the window fits the display and remains responsive throughout the demo.</li>
+<li>Confirm step 3 shows a failure and step 4 is skipped due to the dependency.</li>
+<li>Expand the error; verify the message is legible and selectable.</li>
+<li>Choose Retry unfinished. Only failed/skipped steps should run; all steps should then finish.</li>
+<li>Confirm Done closes the window. During active work, Close/Alt+F4 should leave the workflow running; minimize should work.</li>
+<li>Run the Dark-Demo and All10-Demo configurations shown in README.md.</li>
+<li>Test at your normal laptop resolution, 100/125/150/200% scaling, and your normal docked monitor setup. The step list should scroll, and the footer must remain reachable.</li>
+<li>Add your actual logo/banner and inspect cropping, long welcome text, and long step labels.</li>
+</ol>
+
+<h2>SYSTEM/ServiceUI pilot</h2>
+
+<ol>
+<li>Work on a disposable/test device with your normal application-control policies.</li>
+<li>Put a harmless real action in one step, such as verifying an existing file. Disable the other steps. Keep RequireSystemForLive true.</li>
+<li>Stage the full package in a protected local folder and use your existing SYSTEM + ServiceUI first-desktop trigger.</li>
+<li>Confirm the expected logged-on session sees the UI and the step transcript reports the expected identity.</li>
+<li>Verify success, a deliberate throw, a declared dependency failure, and an optional failure.</li>
+<li>Run the package again. Matching successful steps should be skipped; if all work is complete, no window should appear.</li>
+<li>Change the test step's contents and rerun. Its fingerprint should change and the step should run again.</li>
+<li>Test a short time limit with a harmless sleeping step. The worker should be terminated, remaining steps skipped, and in-window retry hidden.</li>
+<li>Test reboot-required behavior using a harmless <code>exit 3010</code> step. Confirm no reboot is initiated and the caller receives 3010 after Done.</li>
+<li>Test an interrupted run/logoff and a second simultaneous launch. Confirm retry/resume behavior and the 1618 duplicate-instance result.</li>
+</ol>
+
+<p>Only then add the real application/configuration work and validate each action's detection and idempotence. Custom actions can impose limitations that the UI cannot infer.</p>
+
+<h2>Troubleshooting</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Symptom</th>
+  <th>Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>No window when launched by Intune</td>
+  <td>Confirm the call occurs after desktop readiness; confirm ServiceUI/session target and use your existing known-good launcher. A direct SYSTEM launch without ServiceUI is not interactive.</td>
+</tr>
+<tr>
+  <td>Live run says SYSTEM is required</td>
+  <td>ServiceUI does not elevate an ordinary user. Invoke from your existing SYSTEM task/deployment.</td>
+</tr>
+<tr>
+  <td>Powershell host/STA error</td>
+  <td>Use 64-bit Windows PowerShell 5.1 with -STA. Use Sysnative from a 32-bit caller.</td>
+</tr>
+<tr>
+  <td>Window closes immediately / hidden startup failure</td>
+  <td>Run Validate-Config.cmd, then launch the PS1 from a visible PowerShell console. Check JSON paths, image existence, runtime version, and application-control policy.</td>
+</tr>
+<tr>
+  <td>A supplied step fails instantly</td>
+  <td>Placeholder scripts deliberately throw until you replace their code.</td>
+</tr>
+<tr>
+  <td>Script works interactively but fails here</td>
+  <td>Check SYSTEM's profile, working directory, network identity, permissions, mapped drives, and bitness. Use local files and explicit paths.</td>
+</tr>
+<tr>
+  <td>State did not rerun a completed step</td>
+  <td>Match SetupId/SetupVersion; inspect the completion record. For intentional full retest use -ResetState; for a new revision bump SetupVersion.</td>
+</tr>
+<tr>
+  <td>Changed installer file did not rerun a step</td>
+  <td>External payload/helper contents are not fingerprinted. Bump SetupVersion or change the step/parameters; keep real detection in your script.</td>
+</tr>
+<tr>
+  <td>UI reports success after an EXE failed</td>
+  <td>Check that every native result is tested; prefer Invoke-SetupProcess. Outputting false/error text is not a failure signal.</td>
+</tr>
+<tr>
+  <td>Step remains running after its installer seems done</td>
+  <td>Ensure your script returns and all waited-for child processes exit. Inspect the transcript and installer process tree.</td>
+</tr>
+<tr>
+  <td>Timeout still leaves installer activity</td>
+  <td>Some installs continue inside a Windows service. Inspect/recover that operation before restarting the workflow.</td>
+</tr>
+<tr>
+  <td>Progress jumps or shows 100% with a failure</td>
+  <td>Overall progress counts finished steps, including failed/skipped work. Status color and text indicate the outcome.</td>
+</tr>
+<tr>
+  <td>Retry button is missing</td>
+  <td>AllowRetry must be true; a timeout/controller error intentionally disables retry.</td>
+</tr>
+<tr>
+  <td>Dark content, light title bar</td>
+  <td>The content theme is custom WPF; the native title bar is left to Windows.</td>
+</tr>
+<tr>
+  <td>Completion state is unreadable</td>
+  <td>Inspect/archive the state file explicitly. The framework stops rather than silently repeating production actions.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Sources used for platform behavior</h2>
+
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/desktop/wpf/advanced/threading-model">Microsoft: WPF threading model</a></li>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/animation-overview">Microsoft: WPF animation overview</a></li>
+<li><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process?view=powershell-5.1">Microsoft: Start-Process, Windows PowerShell 5.1</a></li>
+<li><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.host/start-transcript?view=powershell-5.1">Microsoft: Start-Transcript, Windows PowerShell 5.1</a></li>
+<li><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-5.1">Microsoft: automatic variables and LASTEXITCODE</a></li>
+</ul>
+
+<p>The window, configuration format, step runner, and documentation in this package are a custom implementation, not a Microsoft or PSADT product.</p>
+</section></main></div></body></html>
