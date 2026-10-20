@@ -1,6 +1,29 @@
 ﻿# Windows PowerShell 5.1 compatible. No UI is loaded by this file.
 Set-StrictMode -Version 2.0
 
+function Set-SetupXamlTheme {
+    param([Parameter(Mandatory)][xml]$Xaml, [Parameter(Mandatory)]$Appearance)
+    # Apply colors before XamlReader.Load. WPF must create the actual Brush objects.
+    # Inserting New-Object output into ResourceDictionary's object-valued indexer can
+    # preserve a PowerShell wrapper that WPF cannot use as a Background/Foreground.
+    $palette = @{}
+    if ($Appearance.Theme -eq 'Dark') {
+        $palette = @{ CanvasBrush='#151C29'; CardBrush='#1E293B'; TextBrush='#F1F5F9'; MutedBrush='#ACBAD0'; BorderBrush='#35435A'; SubtleBrush='#263349'; AccentSoftBrush='#243A61' }
+    }
+    $palette.AccentBrush = $Appearance.AccentColor
+    $palette.SuccessBrush = $Appearance.SuccessColor
+    $palette.FailureBrush = $Appearance.FailureColor
+    $palette.WarningBrush = $Appearance.WarningColor
+    $namespaces = [System.Xml.XmlNamespaceManager]::new($Xaml.NameTable)
+    $namespaces.AddNamespace('w', 'http://schemas.microsoft.com/winfx/2006/xaml/presentation')
+    $namespaces.AddNamespace('x', 'http://schemas.microsoft.com/winfx/2006/xaml')
+    foreach ($key in $palette.Keys) {
+        $brushNode = $Xaml.SelectSingleNode("/w:Window/w:Window.Resources/w:SolidColorBrush[@x:Key='$key']", $namespaces)
+        if ($null -eq $brushNode) { throw "Missing SolidColorBrush resource in MainWindow.xaml: $key" }
+        $brushNode.SetAttribute('Color', [string]$palette[$key])
+    }
+}
+
 function Get-SetupHash {
     param([Parameter(Mandatory)][string]$Text)
     $sha = [System.Security.Cryptography.SHA256]::Create()
